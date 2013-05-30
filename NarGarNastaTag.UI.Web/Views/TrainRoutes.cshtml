@@ -1,0 +1,63 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<NarGarNastaTag.API.Contract.ITrainRoute>
+@{
+    Layout = "Shared/_Layout.cshtml";
+}
+@section Description {<meta name="description" content="Aktuella tågtider för avgående tåg på sträckan @Model.FromStation.StationName till @Model.ToStation.StationName. Du ser också spårbyten, eventuella förseningar och om tåget är inställt." />}
+@section Title {<title>När går nästa tåg? - Tåg @Model.FromStation.StationName till @Model.ToStation.StationName</title>}           
+@section Heading{<h1><span class="direction">Tåg </span>@Model.FromStation.StationName till @Model.ToStation.StationName</h1>}
+@section AdditionalScripts{
+    <script type="text/javascript">
+        (function ($) {
+            var routesPage;
+            $('#routesPage').bind('pageshow', function () {
+                routesPage = new RoutesPage();
+                routesPage.load();
+            });
+            $('#routesPage').bind("pagehide", function () {
+                routesPage.routeQueue = null;
+            });
+        })(jQuery);
+    </script>
+}
+@section PageId{id="routesPage"}
+        <p class="descriptive-text">
+            Tågtider för <b>avgående tåg</b> på sträckan <b>@Model.FromStation.StationName till @Model.ToStation.StationName</b>. I tidtabellen ser du tågens avgång, ankomst, aktuellt spår, spårbyten, eventuella förseningar och om tåget är inställt. Den information som visas gäller direktavgångar, sträckor med byten ingår inte.
+        </p>
+        <ul id="routes" data-role="listview">
+            <li id="routeItemTemplate" class="route" style="display: none;">
+                <a href="/Train?route=@Model.RouteNo" class="routeInfo" rel="nofollow">
+                    <table>
+                        <tr class="stationInfo">
+                            <th class="theRoute" colspan="2"><span class="fromStation">@Model.FromStation.StationName</span> &ndash; <span class="toStation">@Model.FromStation.StationName</span><i> (<span class="trainNo"></span>)</i></th>
+                        </tr>
+                        <tr class="timetable">
+                            <td class="tighten">
+                                <span class="departure">
+                                    @(!string.IsNullOrEmpty(Model.FromStation.UpdatedDeparture) ? Model.FromStation.UpdatedDeparture : Model.FromStation.ScheduledDeparture)
+                                </span>
+                                <span class="departureDelayed hide"> (<span class="scheduledDeparture">@Model.FromStation.ScheduledDeparture</span>)</span>
+                            </td>
+                            <td>
+                                <span class="arrival">
+                                    @(!string.IsNullOrEmpty(Model.ToStation.UpdatedArrival) ? Model.ToStation.UpdatedArrival : Model.ToStation.ScheduledArrival)
+                                </span>
+                                <span class="arrivalDelayed hide"> (<span class="scheduledArrival">@Model.ToStation.ScheduledArrival</span>)</span>
+                            </td>
+                        </tr>
+                        <tr class="trackInfo">
+                            <td>Spår <span class="departureTrack track">@Model.FromStation.Track</span></td>
+                            <td>Spår <span class="arrivalTrack track">@Model.ToStation.Track</span></td>
+                        </tr>
+                        <tr class="hasTrainOperator">
+                            <td colspan="2">Körs av <span class="trainOperator">@Model.TrainOperator</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="notes"></td>
+                        </tr>
+                    </table>
+                </a>
+            </li>
+        </ul>
+        <div>
+            <ul id="stations"></ul>
+        </div>

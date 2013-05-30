@@ -1,0 +1,61 @@
+﻿@using System.Configuration
+@using SquishIt.Framework
+@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+
+<!DOCTYPE html>
+<html lang="sv">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        @RenderSection("Description", required: false)
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        @RenderSection("AdditionalMetaTags", required: false)
+        @RenderSection("Title", required: false)
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            var pluginUrl = '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+            _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+            _gaq.push(['_setAccount', '@ConfigurationManager.AppSettings["GOOGLE_ANALYTICS_ID"]']);
+            _gaq.push(['_trackPageview']);
+            (function () {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:600" rel="stylesheet" type="text/css">
+        @Html.Raw(Bundle.Css().RenderCachedAssetTag("app-ui-css"))
+        @Html.Raw(Bundle.JavaScript().RenderCachedAssetTag("jquery-with-mobile"))
+    </head>
+    <body>
+        <div @RenderSection("PageId") data-role="page" data-theme="a">
+            <div class="header ui-bar ui-bar-b">
+                <div class="heading">
+                    @RenderSection("Heading")
+                </div>
+                <div class="navigation">
+                    <div>
+                        <a href="/" data-role="button" data-icon="home" data-inline="true" data-iconpos="notext" class="greenish">Hem</a>                
+                        <a href="/Favourites" data-role="button" data-icon="gear" data-inline="true" data-iconpos="notext" class="bluish">Inställningar</a>
+                        @*<a href="#" data-role="button" data-icon="edit" data-inline="true" data-iconpos="notext" class="greyish">Kontakt</a>
+                        <a href="#" data-role="button" data-icon="info" data-inline="true" data-iconpos="notext" class="greenish">Hjälp</a>*@                      
+                    </div>
+                </div>
+            </div>
+            <div data-role="content">
+                @RenderBody()
+            </div>
+            <div class="footer" data-role="footer">
+                <a href="/" title="När går nästa tåg? - Pendlarens tågtidtabell">
+                    <img src="/Content/images/commuter-icon-24x24.png" alt="När går nästa tåg? - Pendlarens tågtidtabell" />                        
+                </a>
+                <div class="about" style="float: right;">
+                    <span class="nt-version"></span>
+                    <span class="copyright"></span>
+                </div>
+            </div>
+            @Html.Raw(Bundle.JavaScript().RenderCachedAssetTag("app"))
+            @RenderSection("AdditionalScripts", required: false)
+        </div>
+    </body>
+</html>

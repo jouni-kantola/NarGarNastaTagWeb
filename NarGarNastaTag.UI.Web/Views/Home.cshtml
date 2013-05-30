@@ -1,0 +1,32 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+@{
+    Layout = "Shared/_Layout.cshtml";
+}
+@section Description {<meta name="description" content="Personlig tågtidtabell med favoritsträckor, som visar aktuella tågtider, förseningar och spårbyten - även om avgången ingår i en längre rutt." />}
+@section Title {<title>När går nästa tåg? - Pendlarens tågtidtabell</title>}           
+@section Heading{<h1>Din tågtidtabell</h1>}
+@section AdditionalScripts{
+    <script type="text/javascript">
+        (function ($) {
+            $(document).bind('pageshow', function () {
+                Commuter.UI.HomePage.load();
+            });
+        })(jQuery);
+    </script>
+}
+@section PageId{id="mainPage"}
+                <p class="descriptive-text">
+                    Är tåget i tid? För dig som är <b>pendlare</b> eller dig som vill kontrollera <b>aktuella tågtider</b>, så kan du nu enkelt hålla koll på <b>kommande avgångar för dina favoritsträckor</b>.
+                    Genom att lägga till <b>favoriter till din tågtidtabell</b>, så kan du med <b>mobilen snabbt se kommande tåg, även om avgångarna ingår i en längre rutt</b>. I tidtabellen ser du också <b>tågets eventuella förseningar och spårbyten</b>.
+                </p>
+                <p class="descriptive-text">
+                    I dagsläget visas <b>avgångar för tåg som är direktrutter</b> med t ex <a href="http://www.sj.se" target="_blank" title="SJ" rel="nofollow">SJ</a>, <a href="http://www.ul.se" target="_blank" title="Upplands Lokaltrafik" rel="nofollow">UL</a>, <a href="http://www.oresundstag.se" title="Öresundståg" target="_blank" rel="nofollow">Öresundståg</a> och <a href="http://www.varmlandstrafik.se" target="_blank" title="Värmlandstrafik" rel="nofollow">Värmlandstrafik</a>, etc. Sök efter stationer och <b>lägg till dina favoritsträckor</b>. Vi rekommenderar att du lägger till När går nästa tåg? - Pendlarens tågtidtabell till din startskärm på telefonen.
+                </p>
+<ul id="favouriteRoutes" data-role="listview" data-split-icon="back">
+    <li id="favouriteRouteItemTemplate" style="display: none;">
+        <a href="/Routes/from/fromId/to/toId" class="routes" rel="nofollow">
+            <h3><span class="from">T ex från Uppsala C, Karlstad C eller Falun C</span> &ndash; <span class="to">t ex Stockholm C, Västerås C eller Borlänge C</span></h3>
+        </a>
+        <a href="#" class="switchOrder" title="Byt avgång och destination" rel="nofollow">Byt avgång och destination</a>
+    </li>
+</ul>

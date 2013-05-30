@@ -1,0 +1,34 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+@{
+    Layout = "Shared/_Layout.cshtml";
+}
+@section Description {<meta name="description" content="Tågsträckans aktuella tider, hållplatser och spår." />}
+@section AdditionalMetaTags {<meta name="robots" content="noindex">}
+@section Title {<title>När går nästa tåg? - Tågsträcka</title>}           
+@section Heading{<h1>Tågsträcka</h1>}
+@section AdditionalScripts{
+    <script type="text/javascript">
+        (function ($) {
+            $('#trainPage').bind('pageshow', function () {
+                Commuter.UI.TrainPage.load();
+            });
+        })(jQuery);
+    </script>
+}
+@section PageId{id="trainPage"}
+        <table id="stopsOnRoute">
+            <tr class="stopOnRouteHeader" style="display: none;">
+                <th>Hållplats</th>
+                <th>Spår</th>
+                <th>Ankomst</th>
+                <th>Avgång</th>
+                <th style="display: none;">Kommentar</th>
+            </tr>
+            <tr id="stopOnRouteItemTemplate" class="stop" style="display: none;">
+                <td class="stopName"></td>
+                <td class="stopTrack"></td>
+                <td class="stopArrival"></td>
+                <td class="stopDeparture"></td>
+                <td class="comment" style="display: none;"></td>
+            </tr>
+        </table>

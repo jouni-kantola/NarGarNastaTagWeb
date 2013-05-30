@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /Train?no=no
+Disallow: /Routes?from=fromId&to=toId
+Disallow: /Favourites
+Disallow: /Routes/from/fromId/to/toId
+
+Sitemap: http://commuter.apphb.com/sitemap
