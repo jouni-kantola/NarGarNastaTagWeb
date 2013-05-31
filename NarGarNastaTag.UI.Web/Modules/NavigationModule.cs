@@ -1,7 +1,11 @@
-﻿using Nancy;
+﻿using System;
+using System.Globalization;
+using System.Linq;
+using Nancy;
 using NarGarNastaTag.API.Contract;
 using NarGarNastaTag.UI.Web.Caching;
 using NarGarNastaTag.UI.Web.Models;
+using NarGarNastaTag.UI.Web.Query;
 
 namespace NarGarNastaTag.UI.Web.Modules
 {
@@ -29,26 +33,23 @@ namespace NarGarNastaTag.UI.Web.Modules
             var routeRepository = new RouteStopRepository();
             var cachedTrainRoute = routeRepository.Find(favouriteRoute.FromId, favouriteRoute.ToId);
             if (cachedTrainRoute != null) return cachedTrainRoute;
-            //var stationRouteExtractor = new StationRouteExtractor(favouriteRoute.FromId);
-            //var routeScraper = new HtmlScraper<Route>(stationRouteExtractor);
-            //var stationRoutesUrl = _settingsProvider.GetStationRoutesUrl(favouriteRoute.FromId);
-            //var routes = routeScraper.Scrape(stationRoutesUrl);
-            //foreach (var route in routes)
-            //{
-            //    var date = DateTime.ParseExact(route.Date, "yyyyMMdd", CultureInfo.InvariantCulture);
-            //    var trainRouteExtractor = new TrainRouteExtractor(favouriteRoute.FromId, favouriteRoute.ToId, date);
-            //    var trainStopScraper = new HtmlScraper<TrainRoute>(trainRouteExtractor);
-            //    var routeUrl = _settingsProvider.GetRouteUrl(date, int.Parse(route.RouteNo));
-            //    var trainRoutes = trainStopScraper.Scrape(routeUrl);
-            //    if (trainRoutes.Any())
-            //    {
-            //        var trainRoute = trainRoutes.First();
-            //        if (!string.IsNullOrWhiteSpace(trainRoute.FromStation.StationName) &&
-            //            !string.IsNullOrWhiteSpace(trainRoute.ToStation.StationName))
-            //            routeRepository.Add(trainRoute);
-            //        return trainRoute;
-            //    }
-            //}
+            var stationRoutesQuery = new ApiQuery<Route>(_settingsProvider);
+            var routes = stationRoutesQuery.Query(string.Format("/query/station/{0}", favouriteRoute.FromId));
+            foreach (var route in routes)
+            {
+                var routeQuery = new ApiQuery<TrainRoute>(_settingsProvider);
+                var queryUri = string.Format("/query/date/{0}/route/{1}/from/{2}/to/{3}", route.Date, int.Parse(route.RouteNo),
+                                             favouriteRoute.FromId, favouriteRoute.ToId);
+                var trainRoutes = routeQuery.Query(queryUri);
+                if (trainRoutes.Any())
+                {
+                    var trainRoute = trainRoutes.First();
+                    if (!string.IsNullOrWhiteSpace(trainRoute.FromStation.StationName) &&
+                        !string.IsNullOrWhiteSpace(trainRoute.ToStation.StationName))
+                        routeRepository.Add(trainRoute);
+                    return trainRoute;
+                }
+            }
             return null;
         }
     }

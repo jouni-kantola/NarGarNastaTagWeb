@@ -1,22 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Runtime.Serialization.Json;
-using System.Web;
 using NarGarNastaTag.UI.Web.Models;
+using ServiceStack.Text;
 
 namespace NarGarNastaTag.UI.Web.Query
 {
-    public interface IApiQuery<T>
-    {
-        string ApiUrl { get; set; }
-        string ApiKey { get; set; }
-        T Query(string url);
-    }
-
-    public class ApiQuery<T> : IApiQuery<T>
+    public class ApiQuery<T> : IApiQuery<T> where T : class 
     {
         public string ApiUrl { get; set; }
         public string ApiKey { get; set; }
@@ -27,7 +17,7 @@ namespace NarGarNastaTag.UI.Web.Query
             ApiKey = settingsProvider.ApiKey;
         }
 
-        public T Query(string url)
+        public IEnumerable<T> Query(string url)
         {
             using (var httpClient = new HttpClient())
             {
@@ -36,8 +26,7 @@ namespace NarGarNastaTag.UI.Web.Query
                 response.EnsureSuccessStatusCode();
                 using (var responseStream = response.Content.ReadAsStreamAsync().Result)
                 {
-                    //return (new StreamReader(responseStream)).ReadToEnd();
-                    return ServiceStack.Text.JsonSerializer.DeserializeFromStream<T>(responseStream);
+                    return JsonSerializer.DeserializeFromStream<IEnumerable<T>>(responseStream);
                 }
             }
         }

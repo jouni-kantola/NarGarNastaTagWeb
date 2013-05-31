@@ -77,7 +77,7 @@ namespace NarGarNastaTag.UI.Web.Modules
 
         private List<Station> GetRoutes()
         {
-            var apiQuery = new ApiQuery<IEnumerable<Station>>(_settingsProvider);
+            var apiQuery = new ApiQuery<Station>(_settingsProvider);
             return apiQuery.Query("/query/stations").ToList();
         }
 
