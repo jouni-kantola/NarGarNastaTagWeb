@@ -1,9 +1,13 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
 using System.Net;
 using System.Text;
 using Nancy;
+using NarGarNastaTag.API.Contract;
 using NarGarNastaTag.UI.Web.Extensions;
 using NarGarNastaTag.UI.Web.Models;
+using NarGarNastaTag.UI.Web.Query;
 using HttpStatusCode = Nancy.HttpStatusCode;
 
 namespace NarGarNastaTag.UI.Web.Modules
@@ -45,41 +49,37 @@ namespace NarGarNastaTag.UI.Web.Modules
 
         private string GetRouteUrlset(char from, char to)
         {
-            //var routes = GetRoutes();
-            //var urlset = new StringBuilder(@"<urlset xmlns=""http://www.sitemaps.org/schemas/sitemap/0.9"">");
+            var routes = GetRoutes();
+            var urlset = new StringBuilder(@"<urlset xmlns=""http://www.sitemaps.org/schemas/sitemap/0.9"">");
 
-            //var departureStations = routes.Where(station =>
-            //    {
-            //        var beginsWith = station.Name.ToUpper().ToCharArray().First();
-            //        return beginsWith >= from && beginsWith <= to;
-            //    }).ToList();
-            
-            //var siteMapSize = 0;
-            //var urlBase = GetUrlBase();
-            //departureStations.ForEach(station => routes.ForEach(route =>
-            //    {
-            //        if ((station.Id != route.Id) && siteMapSize < 50000)
-            //        {
-            //            urlset.AppendLine(string.Format(
-            //                "<url><loc>{0}/Routes/from/{1}/to/{2}</loc><changefreq>daily</changefreq></url>",
-            //                urlBase, station.Id, route.Id));
-            //            siteMapSize++;
-            //        }
-            //    }
-            //                                         ));
-            //urlset.AppendLine("</urlset>");
-            //return urlset.ToString();
-            return string.Empty;
+            var departureStations = routes.Where(station =>
+                {
+                    var beginsWith = station.Name.ToUpper().ToCharArray().First();
+                    return beginsWith >= from && beginsWith <= to;
+                }).ToList();
+
+            var siteMapSize = 0;
+            var urlBase = GetUrlBase();
+            departureStations.ForEach(station => routes.ForEach(route =>
+                {
+                    if ((station.Id != route.Id) && siteMapSize < 50000)
+                    {
+                        urlset.AppendLine(string.Format(
+                            "<url><loc>{0}/Routes/from/{1}/to/{2}</loc><changefreq>daily</changefreq></url>",
+                            urlBase, station.Id, route.Id));
+                        siteMapSize++;
+                    }
+                }
+                                                     ));
+            urlset.AppendLine("</urlset>");
+            return urlset.ToString();
         }
 
-        //private List<Station> GetRoutes()
-        //{
-        //    var htmlExtractor = new StationExtractor();
-        //    var htmlScraper = new HtmlScraper<Station>(htmlExtractor);
-        //    var url = _settingsProvider.GetAllStationsUrl();
-        //    var routes = htmlScraper.Scrape(url).ToList();
-        //    return routes;
-        //}
+        private List<Station> GetRoutes()
+        {
+            var apiQuery = new ApiQuery<IEnumerable<Station>>(_settingsProvider);
+            return apiQuery.Query("/query/stations").ToList();
+        }
 
         private static string CreateSitemap(string urlset)
         {
