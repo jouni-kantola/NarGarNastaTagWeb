@@ -4,7 +4,7 @@ var Commuter;
         var commuterController;
         (function ($, controller) {
             $(document).bind('pageinit', function () {
-                $('.nt-version').text('v1.08');
+                $('.nt-version').text('v1.09');
                 $('.copyright').text('\u00a9 Jouni Kantola 2012');
             });
         })(jQuery, commuterController || (commuterController = new Commuter.Trains.CommuterController()));

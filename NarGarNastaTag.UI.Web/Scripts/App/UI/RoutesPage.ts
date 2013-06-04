@@ -73,7 +73,7 @@ var commuterController: Commuter.Trains.CommuterController;
                 return;
             }
             var routeToQuery: any = that.routeQueue[0];
-            $.get('/query/date/' + routeToQuery.routeDate + '/route/' + parseInt(routeToQuery.trainNo) + '/from/' + routeToQuery.fromStationId + '/to/' + routeToQuery.toStationId,
+            $.get(commuterController.apiUrl + '/query/date/' + routeToQuery.routeDate + '/route/' + parseInt(routeToQuery.trainNo) + '/from/' + routeToQuery.fromStationId + '/to/' + routeToQuery.toStationId,
                 function (data) {
                     that.displayRoute(data, $templateElement, callback);
                     that.routeQueue && that.routeQueue.shift();

@@ -10,6 +10,7 @@ var Commuter;
                 this.idGenerator = Trains.Common.IoC.resolve("IGenerateId");
                 this.routeHandler = Trains.Common.IoC.resolve("IKnowFavouriteRoutes");
                 this.remoteQueryExecutor = Trains.Common.IoC.resolve("IQueryRemoteRoutes");
+                this.apiUrl = window['apiUrl'];
             }
             CommuterController.prototype.add = function (fromName, fromId, toName, toId, callback) {
                 var route = new Trains.Entities.Route();
@@ -69,7 +70,7 @@ var Commuter;
                 });
             };
             CommuterController.prototype.scrapeStations = function (callback) {
-                $.get('/query/stations', function (data) {
+                $.get(this.apiUrl + '/query/stations', function (data) {
                     var context = {
                         data: data
                     };
@@ -77,7 +78,7 @@ var Commuter;
                 });
             };
             CommuterController.prototype.scrapeStationRoutes = function (stationId, callback) {
-                $.get('/query/station/' + stationId, function (data) {
+                $.get(this.apiUrl + '/query/station/' + stationId, function (data) {
                     var context = {
                         data: data
                     };

@@ -15,12 +15,14 @@ module Commuter.Trains {
         idGenerator: Interfaces.IGenerateId;
         routeHandler: Interfaces.IKnowFavouriteRoutes;
         remoteQueryExecutor: Interfaces.IQueryRemoteRoutes;
-
+        apiUrl: string;
+        
         constructor() {
             this.repository = Common.IoC.resolve("IRouteRepository");
             this.idGenerator = Common.IoC.resolve("IGenerateId");
             this.routeHandler = Common.IoC.resolve("IKnowFavouriteRoutes");
             this.remoteQueryExecutor = Common.IoC.resolve("IQueryRemoteRoutes");
+            this.apiUrl = window['apiUrl'];
         }
 
         add(fromName: string, fromId: string, toName: string, toId: string, callback: Function) {
@@ -78,14 +80,14 @@ module Commuter.Trains {
         }
 
         scrapeStations(callback: Function) {
-            $.get('/query/stations', function (data) {
+            $.get(this.apiUrl + '/query/stations', function (data) {
                 var context: any = { data: data }
                 callback && callback(context);
             });
         }
 
         scrapeStationRoutes(stationId: string, callback: Function) {
-            $.get('/query/station/' + stationId, function (data) {
+            $.get(this.apiUrl + '/query/station/' + stationId, function (data) {
                 var context: any = { data: data }
                 callback && callback(context);
             });
