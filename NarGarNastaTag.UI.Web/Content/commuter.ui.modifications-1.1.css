@@ -1,5 +1,5 @@
 /* jQuery Mobile overrides */
-h1, h2, h3, p, span, input {font-family: 'Segoe UI', Helvetica, 'Open Sans', Arial, sans-serif;color: rgb(80, 80, 80); }
+h1, h2, h3, p, span, input {font-family: 'Segoe UI', Helvetica, Arial, sans-serif;color: rgb(80, 80, 80); }
 h2 { font-size: 1.1em;margin-bottom: 0.5em;}
 li h3 { color: whitesmoke;}
 span, input { color: whitesmoke;}
