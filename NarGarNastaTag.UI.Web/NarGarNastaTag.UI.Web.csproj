@@ -104,7 +104,6 @@
     <Compile Include="Query\IApiQuery.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="BingSiteAuth.xml" />
     <Content Include="Content\commuter.ui.modifications-1.1.css" />
     <Content Include="Content\images\ajax-loader.gif" />
     <Content Include="Content\images\commuter-icon-24x24.png" />
