@@ -70,7 +70,7 @@ var Commuter;
                 });
             };
             CommuterController.prototype.scrapeStations = function (callback) {
-                $.get(this.apiUrl + '/query/stations', function (data) {
+                $.getJSON(this.apiUrl + '/query/stations', function (data) {
                     var context = {
                         data: data
                     };
@@ -78,7 +78,7 @@ var Commuter;
                 });
             };
             CommuterController.prototype.scrapeStationRoutes = function (stationId, callback) {
-                $.get(this.apiUrl + '/query/station/' + stationId, function (data) {
+                $.getJSON(this.apiUrl + '/query/station/' + stationId, function (data) {
                     var context = {
                         data: data
                     };

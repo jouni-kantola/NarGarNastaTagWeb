@@ -80,14 +80,14 @@ module Commuter.Trains {
         }
 
         scrapeStations(callback: Function) {
-            $.get(this.apiUrl + '/query/stations', function (data) {
+            $.getJSON(this.apiUrl + '/query/stations', function (data) {
                 var context: any = { data: data }
                 callback && callback(context);
             });
         }
 
         scrapeStationRoutes(stationId: string, callback: Function) {
-            $.get(this.apiUrl + '/query/station/' + stationId, function (data) {
+            $.getJSON(this.apiUrl + '/query/station/' + stationId, function (data) {
                 var context: any = { data: data }
                 callback && callback(context);
             });
