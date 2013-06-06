@@ -80,6 +80,7 @@ module Commuter.Trains {
         }
 
         scrapeStations(callback: Function) {
+            $.support.cors = true;
             $.getJSON(this.apiUrl + '/query/stations', function (data) {
                 var context: any = { data: data }
                 callback && callback(context);
@@ -87,6 +88,7 @@ module Commuter.Trains {
         }
 
         scrapeStationRoutes(stationId: string, callback: Function) {
+            $.support.cors = true;
             $.getJSON(this.apiUrl + '/query/station/' + stationId, function (data) {
                 var context: any = { data: data }
                 callback && callback(context);

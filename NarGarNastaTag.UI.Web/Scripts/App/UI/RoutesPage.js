@@ -61,20 +61,23 @@ var RoutesPage = function () {
             });
         });
     };
-    this.queryRoutes = function getRoutes($templateElement, callback) {
+    this.queryRoutes = function ($templateElement, callback) {
         if(!that.routeQueue || that.routeQueue.length === 0) {
             callback && callback(that.routesFound);
             return;
         }
         var routeToQuery = that.routeQueue[0];
+        $.support.cors = true;
         $.getJSON(commuterController.apiUrl + '/query/date/' + routeToQuery.routeDate + '/route/' + parseInt(routeToQuery.trainNo) + '/from/' + routeToQuery.fromStationId + '/to/' + routeToQuery.toStationId, function (data) {
             that.displayRoute(data, $templateElement, callback);
             that.routeQueue && that.routeQueue.shift();
-            getRoutes($templateElement, callback);
+            that.queryRoutes($templateElement, callback);
         });
     };
     this.displayRoute = function (data, $templateElement, callback) {
-        if (!data || data.length <= 0) return;
+        if(!data || data.length <= 0) {
+            return;
+        }
         var route = data[0];
         var $newElement = $templateElement.clone();
         $newElement.prop("id", commuterController.idGenerator.getId());
