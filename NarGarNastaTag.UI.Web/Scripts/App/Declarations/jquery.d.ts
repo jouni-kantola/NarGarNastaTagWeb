@@ -168,6 +168,7 @@ interface JQueryStatic {
     *****/
     mobile : any;
     Deferred(): any;
+    ajax(settings: any);
 
     /****
      AJAX

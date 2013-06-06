@@ -80,18 +80,29 @@ module Commuter.Trains {
         }
 
         scrapeStations(callback: Function) {
-            $.support.cors = true;
-            $.getJSON(this.apiUrl + '/query/stations', function (data) {
+            this.doAjax(this.apiUrl + '/query/stations', function (data) {
                 var context: any = { data: data }
                 callback && callback(context);
             });
         }
 
         scrapeStationRoutes(stationId: string, callback: Function) {
-            $.support.cors = true;
-            $.getJSON(this.apiUrl + '/query/station/' + stationId, function (data) {
+            this.doAjax(this.apiUrl + '/query/station/' + stationId, function (data) {
                 var context: any = { data: data }
                 callback && callback(context);
+            });
+        }
+
+        doAjax(url: string, callback: Function) {
+            $.support.cors = true;
+            $.ajax({
+                url: url,
+                type: "GET",
+                dataType: "json",
+                cache: false,
+                success: function (data) {
+                    callback(data);
+                }
             });
         }
     }

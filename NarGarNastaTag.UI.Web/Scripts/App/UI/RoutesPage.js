@@ -68,10 +68,16 @@ var RoutesPage = function () {
         }
         var routeToQuery = that.routeQueue[0];
         $.support.cors = true;
-        $.getJSON(commuterController.apiUrl + '/query/date/' + routeToQuery.routeDate + '/route/' + parseInt(routeToQuery.trainNo) + '/from/' + routeToQuery.fromStationId + '/to/' + routeToQuery.toStationId, function (data) {
-            that.displayRoute(data, $templateElement, callback);
-            that.routeQueue && that.routeQueue.shift();
-            that.queryRoutes($templateElement, callback);
+        $.ajax({
+            url: commuterController.apiUrl + '/query/date/' + routeToQuery.routeDate + '/route/' + parseInt(routeToQuery.trainNo) + '/from/' + routeToQuery.fromStationId + '/to/' + routeToQuery.toStationId,
+            type: "GET",
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+                that.displayRoute(data, $templateElement, callback);
+                that.routeQueue && that.routeQueue.shift();
+                that.queryRoutes($templateElement, callback);
+            }
         });
     };
     this.displayRoute = function (data, $templateElement, callback) {

@@ -70,8 +70,7 @@ var Commuter;
                 });
             };
             CommuterController.prototype.scrapeStations = function (callback) {
-                $.support.cors = true;
-                $.getJSON(this.apiUrl + '/query/stations', function (data) {
+                this.doAjax(this.apiUrl + '/query/stations', function (data) {
                     var context = {
                         data: data
                     };
@@ -79,12 +78,23 @@ var Commuter;
                 });
             };
             CommuterController.prototype.scrapeStationRoutes = function (stationId, callback) {
-                $.support.cors = true;
-                $.getJSON(this.apiUrl + '/query/station/' + stationId, function (data) {
+                this.doAjax(this.apiUrl + '/query/station/' + stationId, function (data) {
                     var context = {
                         data: data
                     };
                     callback && callback(context);
+                });
+            };
+            CommuterController.prototype.doAjax = function (url, callback) {
+                $.support.cors = true;
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    dataType: "json",
+                    cache: false,
+                    success: function (data) {
+                        callback(data);
+                    }
                 });
             };
             return CommuterController;
