@@ -6,7 +6,7 @@ module Commuter.UI {
 
     (function ($, controller) {
         $(document).bind('pageinit', function () {
-            $('.nt-version').text('v1.11');
+            $('.nt-version').text('v1.12');
             $('.copyright').text('\u00a9 Jouni Kantola 2012');
         });
     })(jQuery, commuterController || (commuterController = new Commuter.Trains.CommuterController()));
