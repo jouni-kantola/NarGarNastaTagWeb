@@ -19,8 +19,10 @@ namespace NarGarNastaTag.UI.Web.Modules
             Get["/"] = _ => View["Home"];
             Get["/Routes/from/{FromId}/to/{ToId}"] = parameters =>
                 {
-                    favouriteRoute.FromId = System.Net.WebUtility.UrlDecode(parameters.FromId);
-                    favouriteRoute.ToId = System.Net.WebUtility.UrlDecode(parameters.ToId);
+                    if (string.IsNullOrWhiteSpace(parameters.FromId) || string.IsNullOrWhiteSpace(parameters.ToId))
+                        return HttpStatusCode.BadRequest;
+                    favouriteRoute.FromId = System.Net.WebUtility.UrlDecode(parameters.FromId).ToUpperInvariant();
+                    favouriteRoute.ToId = System.Net.WebUtility.UrlDecode(parameters.ToId).ToUpperInvariant();
                     var trainRoute = GetTrainRoute(favouriteRoute);
                     return trainRoute != null ? View["TrainRoutes", trainRoute] : View["NoDirectRouteFound"];
                 };
