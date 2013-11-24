@@ -67,40 +67,30 @@ var RoutesPage = function () {
     };
 
     this.queryRoutes = function ($templateElement, callback) {
-        var _this = this;
         if (!that.routeQueue || that.routeQueue.length === 0) {
             callback && callback(that.routesFound);
             return;
         }
-        var tasks = [];
-        that.routeQueue.forEach(function (value) {
-            tasks.push(_this.queryRoute(value, $templateElement, callback));
-        });
-        Q.chain(tasks);
+        return that.routeQueue.map(that.queryRoute).map(function (query) {
+            return function () {
+                return query.then(function (data) {
+                    that.routesFound = true;
+                    callback && callback(that.routesFound);
+                    that.displayRoute(data, $templateElement, callback);
+                });
+            };
+        }).reduce(Q.when, Q());
     };
 
-    this.queryRoute = function (routeToQuery, $templateElement, callback) {
-        return function (deferred) {
-            $.support.cors = true;
-            $.ajax({
-                url: commuterController.apiUrl + '/query/date/' + routeToQuery.routeDate + '/route/' + parseInt(routeToQuery.trainNo) + '/from/' + routeToQuery.fromStationId + '/to/' + routeToQuery.toStationId,
-                type: "GET",
-                dataType: "json",
-                cache: false,
-                success: function (data) {
-                    deferred.resolve(function () {
-                        that.routesFound = true;
-                        callback && callback(that.routesFound);
-                        that.displayRoute(data, $templateElement, callback);
-                    });
-                },
-                error: function () {
-                    deferred.reject(function () {
-                    });
-                },
-                timeout: 5000
-            });
-        };
+    this.queryRoute = function (routeToQuery) {
+        $.support.cors = true;
+        return Q($.ajax({
+            url: commuterController.apiUrl + '/query/date/' + routeToQuery.routeDate + '/route/' + parseInt(routeToQuery.trainNo) + '/from/' + routeToQuery.fromStationId + '/to/' + routeToQuery.toStationId,
+            type: "GET",
+            dataType: "json",
+            cache: false,
+            timeout: 5000
+        }));
     };
 
     this.displayRoute = function (data, $templateElement) {

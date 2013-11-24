@@ -15,7 +15,6 @@
 
             SquishIt.Framework.Bundle.JavaScript()
                 .Add("~/Scripts/jQuery.XDomainRequest.js")
-                .Add("~/Scripts/q.chain.js")
                 .Add("~/Scripts/App/IdRandomizer.js")
                 .Add("~/Scripts/App/UrlHelper.js")
                 .Add("~/Scripts/App/Logger.js")

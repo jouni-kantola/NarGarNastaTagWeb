@@ -1,6 +1,6 @@
 ﻿/// <reference path="../declarations/jquery.d.ts" />
 /// <reference path="../declarations/jquery.mobile.d.ts" />
-/// <reference path="../declarations/q.chain.d.ts" />
+/// <reference path="../declarations/q.d.ts" />
 /// <reference path="../commuter.ts" />
 /// <reference path="../UrlHelper.ts" />
 /// <reference path="../Logger.ts" />
@@ -74,35 +74,27 @@ var commuterController: Commuter.Trains.CommuterController;
                 callback && callback(that.routesFound);
                 return;
             }
-            var tasks = [];
-            that.routeQueue.forEach((value) => {
-                tasks.push(this.queryRoute(value, $templateElement, callback));
-            });
-            Q.chain(tasks);
+            return that.routeQueue.map(that.queryRoute).map(function (query) {
+                return function () {
+                    return query.then(function (data, $.noop) {
+                        that.routesFound = true;
+                        callback && callback(that.routesFound);
+                        that.displayRoute(data, $templateElement, callback);
+                    });
+
+                }
+            }).reduce(Q.when, Q);
         }
 
-        this.queryRoute = function (routeToQuery: any, $templateElement: JQuery, callback: Function) {
-             return function (deferred) {
-                 $.support.cors = true;
-                 $.ajax({
-                     url: commuterController.apiUrl + '/query/date/' + routeToQuery.routeDate + '/route/' + parseInt(routeToQuery.trainNo) + '/from/' + routeToQuery.fromStationId + '/to/' + routeToQuery.toStationId,
-                     type: "GET",
-                     dataType: "json",
-                     cache: false,
-                     success: function (data) {
-                         deferred.resolve(() => {
-                             that.routesFound = true;
-                             callback && callback(that.routesFound);
-                             that.displayRoute(data, $templateElement, callback);
-                         });
-                     },
-                     error: function () {
-                         deferred.reject(() => {
-                         });
-                     },
-                     timeout: 5000
-                 });
-	        }
+        this.queryRoute = function (routeToQuery: any) {
+            $.support.cors = true;
+            return Q($.ajax({
+                url: commuterController.apiUrl + '/query/date/' + routeToQuery.routeDate + '/route/' + parseInt(routeToQuery.trainNo) + '/from/' + routeToQuery.fromStationId + '/to/' + routeToQuery.toStationId,
+                type: "GET",
+                dataType: "json",
+                cache: false,
+                timeout: 5000
+            }));
         }
 
         this.displayRoute = function (data: any, $templateElement: JQuery) {

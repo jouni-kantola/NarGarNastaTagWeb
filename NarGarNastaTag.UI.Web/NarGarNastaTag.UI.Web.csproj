@@ -113,7 +113,7 @@
     <Content Include="Content\jquery.mobile.structure-1.3.0.css" />
     <Content Include="favicon.ico" />
     <Content Include="robots.txt" />
-    <Content Include="Scripts\App\Declarations\q.chain.d.ts" />
+    <Content Include="Scripts\App\Declarations\q.d.ts" />
     <Content Include="Scripts\App\interfaces.d.ts" />
     <Content Include="Scripts\App\commuter.ts" />
     <Content Include="Scripts\App\commuter.js">
@@ -245,7 +245,6 @@
   </ItemGroup>
   <ItemGroup>
     <!--<Content Include="Scripts\App\YqlQuery.js.map" />-->
-    <Content Include="Scripts\q.chain.js" />
     <Content Include="Scripts\q.js" />
     <Content Include="Views\Favourites.cshtml" />
     <Content Include="Views\Home.cshtml" />
