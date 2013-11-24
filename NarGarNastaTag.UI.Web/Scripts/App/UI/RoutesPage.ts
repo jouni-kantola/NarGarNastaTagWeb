@@ -1,5 +1,6 @@
 ﻿/// <reference path="../declarations/jquery.d.ts" />
 /// <reference path="../declarations/jquery.mobile.d.ts" />
+/// <reference path="../declarations/q.chain.d.ts" />
 /// <reference path="../commuter.ts" />
 /// <reference path="../UrlHelper.ts" />
 /// <reference path="../Logger.ts" />
@@ -25,7 +26,7 @@ var commuterController: Commuter.Trains.CommuterController;
                 html: ""
             });
 
-            this.getFavouriteRoutes(function (reason: string, foundRoutes: bool) {
+            this.getFavouriteRoutes(function (reason: string, foundRoutes: boolean) {
                 if (!foundRoutes && (that.numberOfRoutesChecked === that.numberOfRoutesToCheck || that.numberOfRoutesToCheck === -1)) {
                     var currentTime = new Date().getHours();
                     if (currentTime >= 22 || currentTime <= 5)
@@ -43,6 +44,7 @@ var commuterController: Commuter.Trains.CommuterController;
             var fromId = match && match[0].replace('from/', '');
             match = RegExp('to\\/[\\d\\,\\wåäöÅÄÖ]+').exec(url);
             var toId = match && match[0].replace('to/', '');
+
             commuterController.scrapeStationRoutes(fromId, function (ctx) {
                 if (!ctx.data || ctx.data.length === 0) {
                     callback("No results for query.", false);
@@ -72,22 +74,38 @@ var commuterController: Commuter.Trains.CommuterController;
                 callback && callback(that.routesFound);
                 return;
             }
-            var routeToQuery: any = that.routeQueue[0];
-            $.support.cors = true;
-            $.ajax({
-                url: commuterController.apiUrl + '/query/date/' + routeToQuery.routeDate + '/route/' + parseInt(routeToQuery.trainNo) + '/from/' + routeToQuery.fromStationId + '/to/' + routeToQuery.toStationId,
-                type: "GET",
-                dataType: "json",
-                cache: false,
-                success: function (data) {
-                    that.displayRoute(data, $templateElement, callback);
-                    that.routeQueue && that.routeQueue.shift();
-                    that.queryRoutes($templateElement, callback);
-                }
+            var tasks = [];
+            that.routeQueue.forEach((value) => {
+                tasks.push(this.queryRoute(value, $templateElement, callback));
             });
+            Q.chain(tasks);
         }
 
-        this.displayRoute = function (data: any, $templateElement: JQuery, callback: Function) {
+        this.queryRoute = function (routeToQuery: any, $templateElement: JQuery, callback: Function) {
+             return function (deferred) {
+                 $.support.cors = true;
+                 $.ajax({
+                     url: commuterController.apiUrl + '/query/date/' + routeToQuery.routeDate + '/route/' + parseInt(routeToQuery.trainNo) + '/from/' + routeToQuery.fromStationId + '/to/' + routeToQuery.toStationId,
+                     type: "GET",
+                     dataType: "json",
+                     cache: false,
+                     success: function (data) {
+                         deferred.resolve(() => {
+                             that.routesFound = true;
+                             callback && callback(that.routesFound);
+                             that.displayRoute(data, $templateElement, callback);
+                         });
+                     },
+                     error: function () {
+                         deferred.reject(() => {
+                         });
+                     },
+                     timeout: 5000
+                 });
+	        }
+        }
+
+        this.displayRoute = function (data: any, $templateElement: JQuery) {
             if (!data || data.length <= 0) return;
             var route = data[0];
             var $newElement = $templateElement.clone();
@@ -163,7 +181,5 @@ var commuterController: Commuter.Trains.CommuterController;
             $newElement.fadeIn('slow');
 
             var $routesPlaceHolder = $('#routes');
-            that.routesFound = true;
-            callback && callback(that.routesFound);
         }
     };

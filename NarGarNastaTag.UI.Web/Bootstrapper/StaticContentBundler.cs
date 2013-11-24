@@ -10,8 +10,12 @@
                 .AsNamed("jquery-with-mobile", "~/assets/js/jquery-with-mobile");
 
             SquishIt.Framework.Bundle.JavaScript()
+                .AddRemote("~/Scripts/q.js", "http://cdnjs.cloudflare.com/ajax/libs/q.js/0.9.6/q.min.js")
+                .AsNamed("q", "~/assets/js/q");
+
+            SquishIt.Framework.Bundle.JavaScript()
                 .Add("~/Scripts/jQuery.XDomainRequest.js")
-                .Add("~/Scripts/Bacon.js")
+                .Add("~/Scripts/q.chain.js")
                 .Add("~/Scripts/App/IdRandomizer.js")
                 .Add("~/Scripts/App/UrlHelper.js")
                 .Add("~/Scripts/App/Logger.js")

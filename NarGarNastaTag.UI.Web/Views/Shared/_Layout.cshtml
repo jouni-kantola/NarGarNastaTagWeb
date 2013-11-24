@@ -29,6 +29,7 @@
         </script>
         @Html.Raw(Bundle.Css().RenderCachedAssetTag("app-ui-css"))
         @Html.Raw(Bundle.JavaScript().RenderCachedAssetTag("jquery-with-mobile"))
+        @Html.Raw(Bundle.JavaScript().RenderCachedAssetTag("q"))
     </head>
     <body>
         <div @RenderSection("PageId") data-role="page" data-theme="a">
