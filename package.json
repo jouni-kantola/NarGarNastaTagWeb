@@ -1,0 +1,26 @@
+{
+  "name": "NarGarNastaTagWeb",
+  "version": "2.0.0",
+  "description": "Personal train time tables.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jouni-kantola/NarGarNastaTagWeb.git"
+  },
+  "keywords": [
+    "train",
+    "timetable",
+    "sj"
+  ],
+  "author": "Jouni Kantola",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/jouni-kantola/NarGarNastaTagWeb/issues"
+  },
+  "dependencies": {
+    "mocha": "~1.17.0"
+  }
+}
