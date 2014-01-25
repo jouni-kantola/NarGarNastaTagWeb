@@ -32,7 +32,7 @@ define(['jquery', 'history', 'oompa-loompa'], function($, _history, oompa) {
         // Wait for Document
         $(function() {
             /* Application Specific Variables */
-            var contentSelector = '#content,article:first,.article:first,.post:first',
+            var contentSelector = '#content',
                 $content = $(contentSelector).filter(':first'),
                 contentNode = $content.get(0),
                 $menu = $('#menu,#nav,nav:first,.nav:first').filter(':first'),

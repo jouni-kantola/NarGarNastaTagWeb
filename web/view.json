@@ -1,0 +1,7 @@
+{
+	train: {
+		no: 483,
+		from: 'Uppsala C',
+		to: 'Stockholm C'
+	}
+}

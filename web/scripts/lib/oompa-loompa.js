@@ -1,24 +1,37 @@
-define(['q', 'jquery'], function(Q, $) {
+define(['q', 'jquery', 'xdomain'], function(Q, $) {
     function get(url, options) {
+        var ajaxRequest = createAjaxRequest(url, options);
+        return Q(ajaxRequest);
+    }
+
+    function createAjaxRequest(url, options) {
+        var headers;
         options = options || {};
-        $.support.cors = true;
-        return Q($.ajax({
+        if (options.isPushStateRequest) {
+            headers = {
+                'X-Push-State-Request': options.isPushStateRequest
+            };
+            $.support.cors = false;
+        } else {
+            $.support.cors = true;
+        }
+        return $.ajax({
             url: url,
-            type: "GET",
-            dataType: options.dataType || "json",
-            cache: false,
+            type: 'GET',
+            dataType: options.dataType || 'json',
+            cache: options.cache || false,
             timeout: 5000,
-            headers: {
-                'X-Push-State-Request': options.isPushStateRequest || false
-            },
+            headers: headers,
             data: {
                 hereGoesData: 'yes it does'
             }
-        }));
+        });
     }
 
-    function getAll(urls, callback) {
-        return urls.map(get).map(function(promise) {
+    function getMany(urls, options, callback) {
+        return urls.map(function(url) {
+            return get(url, options);
+        }).map(function(promise) {
             return function() {
                 return promise.then(function(data) {
                     callback(data);
@@ -30,13 +43,14 @@ define(['q', 'jquery'], function(Q, $) {
     function getView(url) {
         return get(url, {
             dataType: 'html',
-            isPushStateRequest: true
+            isPushStateRequest: true,
+            cache: true
         });
     }
 
     return {
         get: get,
-        getAll: getAll,
+        getMany: getMany,
         getView: getView
     };
 });

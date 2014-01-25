@@ -5,7 +5,8 @@ requirejs.config({
         app: '../app',
         jquery: 'jquery-2.0.3.min',
         history: 'history.adapter.jquery-modified',
-        ajaxify: 'ajaxify-html5-modified'
+        ajaxify: 'ajaxify-html5-modified',
+        xdomain: 'jQuery.XDomainRequest'
     }
 });
 
