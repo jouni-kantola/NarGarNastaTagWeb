@@ -1,10 +1,6 @@
 define(['q', 'jquery'], function(Q, $) {
-    function getView(url, options){
-        return get(url, {dataType: 'text', isPushStateRequest: true});
-    };
-
     function get(url, options) {
-        var o = options || {};
+        options = options || {};
         $.support.cors = true;
         return Q($.ajax({
             url: url,
@@ -19,7 +15,7 @@ define(['q', 'jquery'], function(Q, $) {
                 hereGoesData: 'yes it does'
             }
         }));
-    };
+    }
 
     function getAll(urls, callback) {
         return urls.map(get).map(function(promise) {
@@ -27,13 +23,20 @@ define(['q', 'jquery'], function(Q, $) {
                 return promise.then(function(data) {
                     callback(data);
                 });
-            }
+            };
         }).reduce(Q.when, Q);
-    };
+    }
+
+    function getView(url) {
+        return get(url, {
+            dataType: 'html',
+            isPushStateRequest: true
+        });
+    }
 
     return {
         get: get,
         getAll: getAll,
         getView: getView
-    }
+    };
 });

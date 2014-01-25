@@ -1,5 +1,5 @@
 // https://gist.github.com/1145804
-define(['jquery', 'history', 'umpa-lumpa'], function($, _history, umpa) {
+define(['jquery', 'history', 'oompa-loompa'], function($, _history, oompa) {
     'use strict';
     (function(window, undefined) {
 
@@ -123,16 +123,14 @@ define(['jquery', 'history', 'umpa-lumpa'], function($, _history, umpa) {
                 // Start Fade Out
                 // Animating to opacity to 0 still keeps the element's height intact
                 // Which prevents that annoying pop bang issue when loading in new content
-                //$content.fadeOut('slow');
+                // $content.fadeOut('slow');
 
-                // Have the umpa lumpa go get the page
-
-                var promise = umpa.getView(url);
+                // Have the oompa loompa go get the page
+                var promise = oompa.getView(url);
 
                 promise.done(function(data, textStatus, jqXHR) {
                     // Prepare
-                    var
-                    $data = $(documentHtml(data)),
+                    var $data = $(documentHtml(data)),
                         $dataBody = $data.find('.document-body:first'),
                         $dataContent = $dataBody.find(contentSelector).filter(':first'),
                         $menuChildren, contentHtml, $scripts;
