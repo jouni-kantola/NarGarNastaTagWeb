@@ -1,4 +1,3 @@
-// https://gist.github.com/1145804
 define(function(require) {
     'use strict';
 
@@ -7,10 +6,7 @@ define(function(require) {
         // Prepare our Variables
         var history = window.history,
             document = window.document,
-            $ = require('jquery'),
-            historyjs = require('history'),
-            oompa = require('oompa'),
-            Q = require('q');
+            $ = require('jquery');
 
         // Check to see if the HTML5 History API is enabled for our Browser
         if (!history.pushState) {
@@ -72,28 +68,32 @@ define(function(require) {
             };
 
             var updateView = function(url) {
-                var deferred = Q.defer();
+                var deferred = $.Deferred();
                 // Set Loading
                 $body.addClass('loading');
 
                 // Start Fade Out
                 // Animating to opacity to 0 still keeps the element's height intact
                 // Which prevents that annoying pop bang issue when loading in new content
-                // $content.fadeOut('slow');
+                $content.fadeOut('slow');
 
-                // Have the oompa loompa go get current view
-                var promise = oompa.getView(url);
-                promise.done(function(html, textStatus, jqXHR) {
-                    var view = renderHtml(html, url);
-                    deferred.resolve(view);
+                $.ajax({
+                    url: url,
+                    headers: {
+                        'X-Push-State-Request': true
+                    },
+                    success: function(data, textStatus, jqXHR) {
+                        var view = renderHtml(data, url);
+                        deferred.resolve(view);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        deferred.fail(errorThrown);
+                        document.location.href = url;
+                        return false;
+                    }
                 });
 
-                promise.fail(function(jqXHR, textStatus, errorThrown) {
-                    document.location.href = url;
-                    deferred.reject();
-                    return false;
-                });
-                return deferred.promise;
+                return deferred.promise();
             };
 
             // HTML Helper
@@ -216,8 +216,10 @@ define(function(require) {
 
                 // Update view to requested resource
                 updateView(url)
-                    .then(function(currentView){
-                        require(['app/views/' + currentView], function(view){
+                    .then(function(viewPath) {
+                        if (typeof(viewPath) === 'undefined') return;
+                        require([viewPath], function(view) {
+                            if (typeof(view) === 'undefined' || !view.hasOwnProperty('render')) return;
                             view.render();
                         });
                     });

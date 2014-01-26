@@ -1,10 +1,10 @@
 (function(require) {
-    function getCurrentViewName() {
+    function getCurrentViewPath() {
         return document.getElementById('content').getAttribute('data-view');
     }
 
-    function boostrapView(viewName) {
-        require(['app/views/' + viewName], function(view) {
+    function boostrapView(viewPath) {
+        require([viewPath], function(view) {
             view.render();
         });
     }
@@ -23,7 +23,7 @@
     });
 
     require(['ajaxify'], function() {
-        var viewName = getCurrentViewName();
-        boostrapView(viewName);
+        var viewPath = getCurrentViewPath();
+        boostrapView(viewPath);
     });
 })(require);
