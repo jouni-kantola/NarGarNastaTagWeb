@@ -1,11 +1,16 @@
 // https://gist.github.com/1145804
-define(['jquery', 'history', 'oompa-loompa'], function($, _history, oompa) {
+define(function(require) {
     'use strict';
+
     (function(window, undefined) {
 
         // Prepare our Variables
         var history = window.history,
-            document = window.document;
+            document = window.document,
+            $ = require('jquery'),
+            historyjs = require('history'),
+            oompa = require('oompa'),
+            Q = require('q');
 
         // Check to see if the HTML5 History API is enabled for our Browser
         if (!history.pushState) {
@@ -66,6 +71,31 @@ define(['jquery', 'history', 'oompa-loompa'], function($, _history, oompa) {
                 return isInternalLink;
             };
 
+            var updateView = function(url) {
+                var deferred = Q.defer();
+                // Set Loading
+                $body.addClass('loading');
+
+                // Start Fade Out
+                // Animating to opacity to 0 still keeps the element's height intact
+                // Which prevents that annoying pop bang issue when loading in new content
+                // $content.fadeOut('slow');
+
+                // Have the oompa loompa go get current view
+                var promise = oompa.getView(url);
+                promise.done(function(html, textStatus, jqXHR) {
+                    var view = renderHtml(html, url);
+                    deferred.resolve(view);
+                });
+
+                promise.fail(function(jqXHR, textStatus, errorThrown) {
+                    document.location.href = url;
+                    deferred.reject();
+                    return false;
+                });
+                return deferred.promise;
+            };
+
             // HTML Helper
             var documentHtml = function(html) {
                 // Prepare
@@ -78,6 +108,75 @@ define(['jquery', 'history', 'oompa-loompa'], function($, _history, oompa) {
                 return result;
             };
 
+            var renderHtml = function(html, url) {
+                // Prepare
+                var $data = $(documentHtml(html)),
+                    $dataBody = $data.find('.document-body:first'),
+                    $dataContent = $dataBody.find(contentSelector).filter(':first'),
+                    view = $dataContent.data('view'),
+                    relativeUrl = url.replace(rootUrl, ''),
+                    $menuChildren, contentHtml, $scripts;
+
+                // Fetch the scripts
+                $scripts = $dataContent.find('.document-script');
+                if ($scripts.length) {
+                    $scripts.detach();
+                }
+
+                // Fetch the content
+                contentHtml = $dataContent.html() || $data.html();
+                if (!contentHtml) {
+                    document.location.href = url;
+                    return false;
+                }
+
+                // Update the menu
+                $menuChildren = $menu.find(menuChildrenSelector);
+                $menuChildren.filter(activeSelector).removeClass(activeClass);
+                $menuChildren = $menuChildren.has('a[href^="' + relativeUrl + '"],a[href^="/' + relativeUrl + '"],a[href^="' + url + '"]');
+                if ($menuChildren.length === 1) {
+                    $menuChildren.addClass(activeClass);
+                }
+
+                // Update the content
+                $content.stop(true, true);
+                $content.html(contentHtml).ajaxify().fadeIn('slow'); /* you could fade in here if you'd like */
+
+                // Update the title
+                document.title = $data.find('.document-title:first').text();
+                try {
+                    document.getElementsByTagName('title')[0].innerHTML = document.title.replace('<', '&lt;').replace('>', '&gt;').replace(' & ', ' &amp; ');
+                } catch (Exception) {}
+
+                // Add the scripts
+                $scripts.each(function() {
+                    var $script = $(this),
+                        scriptText = $script.html(),
+                        scriptNode = document.createElement('script');
+                    scriptNode.appendChild(document.createTextNode(scriptText));
+                    contentNode.appendChild(scriptNode);
+                });
+
+                // Complete the change
+                if ($body.ScrollTo || false) {
+                    $body.ScrollTo(scrollOptions);
+                } /* http://balupton.com/projects/jquery-scrollto */
+                $body.removeClass('loading');
+
+                // Inform Google Analytics of the change
+                if (typeof window.pageTracker !== 'undefined') {
+                    window.pageTracker._trackPageview(relativeUrl);
+                }
+
+                // Inform ReInvigorate of a state change
+                if (typeof window.reinvigorate !== 'undefined' && typeof window.reinvigorate.ajax_track !== 'undefined') {
+                    window.reinvigorate.ajax_track(url);
+                    // ^ we use the full url here as that is what reinvigorate supports
+                }
+
+                return view;
+            };
+
             // Ajaxify Helper
             $.fn.ajaxify = function() {
                 // Prepare
@@ -86,8 +185,7 @@ define(['jquery', 'history', 'oompa-loompa'], function($, _history, oompa) {
                 // Ajaxify
                 $this.find('a:internal').click(function(event) {
                     // Prepare
-                    var
-                    $this = $(this),
+                    var $this = $(this),
                         url = $this.attr('href'),
                         title = $this.attr('title') || null;
 
@@ -114,90 +212,15 @@ define(['jquery', 'history', 'oompa-loompa'], function($, _history, oompa) {
             // Hook into State Changes
             $(window).bind('popstate', function() {
                 // Prepare Variables
-                var url = document.location.href,
-                    relativeUrl = url.replace(rootUrl, '');
+                var url = document.location.href;
 
-                // Set Loading
-                $body.addClass('loading');
-
-                // Start Fade Out
-                // Animating to opacity to 0 still keeps the element's height intact
-                // Which prevents that annoying pop bang issue when loading in new content
-                // $content.fadeOut('slow');
-
-                // Have the oompa loompa go get the page
-                var promise = oompa.getView(url);
-
-                promise.done(function(data, textStatus, jqXHR) {
-                    // Prepare
-                    var $data = $(documentHtml(data)),
-                        $dataBody = $data.find('.document-body:first'),
-                        $dataContent = $dataBody.find(contentSelector).filter(':first'),
-                        $menuChildren, contentHtml, $scripts;
-
-                    // Fetch the scripts
-                    $scripts = $dataContent.find('.document-script');
-                    if ($scripts.length) {
-                        $scripts.detach();
-                    }
-
-                    // Fetch the content
-                    contentHtml = $dataContent.html() || $data.html();
-                    if (!contentHtml) {
-                        document.location.href = url;
-                        return false;
-                    }
-
-                    // Update the menu
-                    $menuChildren = $menu.find(menuChildrenSelector);
-                    $menuChildren.filter(activeSelector).removeClass(activeClass);
-                    $menuChildren = $menuChildren.has('a[href^="' + relativeUrl + '"],a[href^="/' + relativeUrl + '"],a[href^="' + url + '"]');
-                    if ($menuChildren.length === 1) {
-                        $menuChildren.addClass(activeClass);
-                    }
-
-                    // Update the content
-                    $content.stop(true, true);
-                    $content.html(contentHtml).ajaxify().fadeIn('slow'); /* you could fade in here if you'd like */
-
-                    // Update the title
-                    document.title = $data.find('.document-title:first').text();
-                    try {
-                        document.getElementsByTagName('title')[0].innerHTML = document.title.replace('<', '&lt;').replace('>', '&gt;').replace(' & ', ' &amp; ');
-                    } catch (Exception) {}
-
-                    // Add the scripts
-                    $scripts.each(function() {
-                        var $script = $(this),
-                            scriptText = $script.html(),
-                            scriptNode = document.createElement('script');
-                        scriptNode.appendChild(document.createTextNode(scriptText));
-                        contentNode.appendChild(scriptNode);
+                // Update view to requested resource
+                updateView(url)
+                    .then(function(currentView){
+                        require(['app/views/' + currentView], function(view){
+                            view.render();
+                        });
                     });
-
-                    // Complete the change
-                    if ($body.ScrollTo || false) {
-                        $body.ScrollTo(scrollOptions);
-                    } /* http://balupton.com/projects/jquery-scrollto */
-                    $body.removeClass('loading');
-
-                    // Inform Google Analytics of the change
-                    if (typeof window.pageTracker !== 'undefined') {
-                        window.pageTracker._trackPageview(relativeUrl);
-                    }
-
-                    // Inform ReInvigorate of a state change
-                    if (typeof window.reinvigorate !== 'undefined' && typeof window.reinvigorate.ajax_track !== 'undefined') {
-                        window.reinvigorate.ajax_track(url);
-                        // ^ we use the full url here as that is what reinvigorate supports
-                    }
-                });
-
-                promise.fail(function(jqXHR, textStatus, errorThrown) {
-                    document.location.href = url;
-                    return false;
-                });
-
             }); // end onStateChange
 
         }); // end onDomLoad
