@@ -10,13 +10,18 @@
         <h1>Favoritsträckor</h1>
         <input type="text" placeholder="Varifrån" class="search" />
         <input type="text" placeholder="...och vart ska du?" class="search" />
-        
-		<hr/>
+
+        <ul id="searchResults">
+            <li rv-each-result="searchResults">
+                <span>{ result.Name }</span>
+            </li>
+        </ul>
+
+        <hr/>
         <a href="index.html?hem">Hem</a>
-        
+
     </div>
 </body>
 <script type="text/javascript" src="scripts/lib/require.js" data-main="scripts/app/bootstrap.js"></script>
-
 
 </html>

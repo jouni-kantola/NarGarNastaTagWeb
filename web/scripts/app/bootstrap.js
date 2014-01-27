@@ -15,14 +15,15 @@
         paths: {
             app: '../app',
             jquery: 'jquery-2.0.3.min',
-            history: 'history.adapter.jquery-modified',
+            history: 'jquery.history',
             ajaxify: 'ajaxify-html5-modified',
             xdomain: 'jQuery.XDomainRequest',
-            oompa: 'oompa-loompa'
+            oompa: 'oompa-loompa',
+            rivets: 'rivets.min'
         }
     });
 
-    require(['ajaxify'], function() {
+    require(['jquery', 'history', 'ajaxify'], function() {
         var viewPath = getCurrentViewPath();
         boostrapView(viewPath);
     });

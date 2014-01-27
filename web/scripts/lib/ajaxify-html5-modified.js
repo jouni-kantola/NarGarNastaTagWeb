@@ -4,12 +4,12 @@ define(function(require) {
     (function(window, undefined) {
 
         // Prepare our Variables
-        var history = window.history,
+        var History = window.History,
             document = window.document,
-            $ = require('jquery');
+            $ = window.jQuery;
 
         // Check to see if the HTML5 History API is enabled for our Browser
-        if (!history.pushState) {
+        if (!History.enabled) {
             return false;
         }
 
@@ -41,6 +41,7 @@ define(function(require) {
                 activeSelector = '.active,.selected,.current,.youarehere',
                 menuChildrenSelector = '> li,> ul > li',
                 /* Application Generic Variables */
+                $window = $(window),
                 $body = $(document.body),
                 rootUrl = history.getRootUrl(),
                 scrollOptions = {
@@ -183,7 +184,7 @@ define(function(require) {
                 var $this = $(this);
 
                 // Ajaxify
-                $this.find('a:internal').click(function(event) {
+                $this.find('a:internal:not(.no-ajaxy)').click(function(event) {
                     // Prepare
                     var $this = $(this),
                         url = $this.attr('href'),
@@ -196,8 +197,7 @@ define(function(require) {
 
                     // Ajaxify this link
                     document.title = title;
-                    history.pushState(null, title, url);
-                    $(window).trigger('popstate');
+                    History.pushState(null, title, url);
                     event.preventDefault();
                     return false;
                 });
@@ -210,9 +210,10 @@ define(function(require) {
             $body.ajaxify();
 
             // Hook into State Changes
-            $(window).bind('popstate', function() {
+            $window.bind('statechange', function() {
                 // Prepare Variables
-                var url = document.location.href;
+                var State = History.getState(),
+                    url = State.url
 
                 // Update view to requested resource
                 updateView(url)
