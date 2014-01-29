@@ -8,12 +8,12 @@
 <body>
     <div id="content" data-view="app/views/search">
         <h1>Favoritsträckor</h1>
-        <input type="text" placeholder="Varifrån" class="search" />
-        <input type="text" placeholder="...och vart ska du?" class="search" />
+        <input id="from" type="text" placeholder="Varifrån" class="search" rv-data-from-id="model.from" />
+        <input id="to" type="text" placeholder="...och vart ska du?" class="search" rv-data-to-id="model.to" />
 
         <ul id="searchResults">
-            <li rv-each-result="searchResults">
-                <span>{ result.Name }</span>
+            <li rv-each-station="model.searchResults">
+                <span><a href="#" class="station" rv-data-id="station.Id" rv-data-direction="station.direction">{ station.Name }</a></span>
             </li>
         </ul>
 

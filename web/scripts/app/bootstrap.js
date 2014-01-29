@@ -23,7 +23,7 @@
         }
     });
 
-    require(['jquery', 'history', 'ajaxify'], function() {
+    require(['jquery', 'history', 'ajaxify', 'rivets'], function($, history, ajaxify, rivets) {
         var viewPath = getCurrentViewPath();
         boostrapView(viewPath);
     });
