@@ -213,17 +213,19 @@ define(function(require) {
             $window.bind('statechange', function() {
                 // Prepare Variables
                 var State = History.getState(),
-                    url = State.url
+                    url = State.url;
 
-                // Update view to requested resource
-                updateView(url)
-                    .then(function(viewPath) {
-                        if (typeof(viewPath) === 'undefined') return;
-                        require([viewPath], function(view) {
-                            if (typeof(view) === 'undefined' || !view.hasOwnProperty('render')) return;
-                            view.render();
+                    // Update view to requested resource
+                    updateView(url)
+                        .then(function(viewPath) {
+                            if (typeof(viewPath) === 'undefined') return;
+                            require([viewPath], function(view) {
+                                if (typeof(view) === 'undefined' || !view.hasOwnProperty('render')) return;
+                                var data = view.populate();
+                                view.render(data);
+                                view.bind();
+                            });
                         });
-                    });
             }); // end onStateChange
 
         }); // end onDomLoad

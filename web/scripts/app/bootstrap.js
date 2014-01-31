@@ -5,10 +5,12 @@
 
     function boostrapView(viewPath) {
         require([viewPath], function(view) {
-            view.render();
+            var data = view.populate();
+            var viewModel = view.render(data);
+            view.bind(viewModel);
         });
     }
-    
+
     require(['config'], function(config) {
         var viewPath = getCurrentViewPath();
         boostrapView(viewPath);

@@ -21,8 +21,9 @@ define(function(require) {
         console.log(viewModel);
     }
 
-    function renderView(viewModel) {
-        if(viewModel === undefined) throw new Error('viewModel is undefined.');
+    function renderView(stations) {
+        if(stations === undefined) throw new Error('stations is undefined.');
+        viewModel.stations = stations;
         $('.search').on('input', function(e) {
             var searchBox = e.target,
                 query = searchBox.value.toLowerCase(),
@@ -32,7 +33,7 @@ define(function(require) {
                 viewModel.searchResults.splice(0, searchResults.length);
             } else {
                 viewModel.searchResults.splice(0, searchResults.length);
-                stations.filter(function(station) {
+                viewModel.stations.filter(function(station) {
                     return station.Name.toLowerCase().indexOf(query) === 0;
                 }).forEach(function(station) {
                     station.direction = searchBox.id;
@@ -48,6 +49,7 @@ define(function(require) {
             confirmSelection($selection.data('direction'), $selection.text(), $selection.data('id'));
             viewModel.searchResults.splice(0, searchResults.length);
         });
+        return viewModel;
     }
 
     function bind(viewModel){
