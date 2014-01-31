@@ -1,4 +1,4 @@
-define(['libs/clientCache'], function(clientCache) {
+define(['lib/clientCache'], function(clientCache) {
     'use strict';
     
     describe('clientCache', function() {

@@ -1,8 +1,8 @@
 require.config({
     paths: {
         app: '../../../scripts/app',
-        libs: '../../scripts/lib',
-        testLibs: '../../../tests/scripts/lib',
+        lib: '../../scripts/lib',
+        framework: '../../../tests/scripts/vendor',
         tests: 'tests/scripts/tests'
     },
     shim: {

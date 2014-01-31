@@ -1,11 +1,5 @@
-define(function(require) {
+define(['require', 'jquery', 'oompa', 'rivets', 'ajaxify', 'clientCache', 'models/search-model'], function(require, $, oompa, rivets, ajaxify, clientCache, viewModel) {
     'use strict';
-
-    var $ = require('jquery'),
-        oompa = require('oompa'),
-        rivets = require('rivets'),
-        clientCache = require('clientCache'),
-        viewModel = require('models/search-model');
 
     function populateStations() {
         return clientCache.getStations();
@@ -22,7 +16,7 @@ define(function(require) {
     }
 
     function renderView(stations) {
-        if(stations === undefined) throw new Error('stations is undefined.');
+        if (stations === undefined) throw new Error('stations is undefined.');
         viewModel.stations = stations;
         $('.search').on('input', function(e) {
             var searchBox = e.target,
@@ -52,7 +46,7 @@ define(function(require) {
         return viewModel;
     }
 
-    function bind(viewModel){
+    function bind(viewModel) {
         rivets.bind($('#content'), {
             model: viewModel
         });

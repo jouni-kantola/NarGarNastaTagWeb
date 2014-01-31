@@ -10,7 +10,7 @@ define(['views/search'], function(searchView) {
 
         describe('render()', function() {
             it('should throw if viewmodel is undefined', function() {
-                searchView.render.should.throw(Error, /viewModel is/);
+                searchView.render.should.throw(Error, /stations is/);
             });
         });
     });

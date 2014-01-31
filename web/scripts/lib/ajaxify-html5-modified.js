@@ -1,4 +1,4 @@
-define(function(require) {
+define(['require', 'history'], function(require) {
     'use strict';
 
     (function(window, undefined) {
@@ -222,8 +222,8 @@ define(function(require) {
                             require([viewPath], function(view) {
                                 if (typeof(view) === 'undefined' || !view.hasOwnProperty('render')) return;
                                 var data = view.populate();
-                                view.render(data);
-                                view.bind();
+                                var viewModel = view.render(data);
+                                view.bind(viewModel);
                             });
                         });
             }); // end onStateChange

@@ -1,18 +1,23 @@
 (function(require) {
     require.config({
-        baseUrl: '../',
+        baseUrl: '../../',
         paths: {
-            jquery: 'scripts/lib/jquery-2.0.3.min',
-            history: 'scripts/lib/jquery.history',
+            jquery: 'scripts/vendor/jquery-2.0.3.min',
+            history: 'scripts/vendor/jquery.history',
+            q: 'scripts/vendor/q',
+            rivets: 'scripts/vendor/rivets.min',
+            xdomain: 'scripts/vendor/jQuery.XDomainRequest',
             ajaxify: 'scripts/lib/ajaxify-html5-modified',
-            xdomain: 'scripts/lib/jQuery.XDomainRequest',
             oompa: 'scripts/lib/oompa-loompa',
-            q: 'scripts/lib/q',
             clientCache: 'scripts/lib/clientCache',
             jsonParser: 'scripts/lib/jsonParser',
-            rivets: 'scripts/lib/rivets.min',
             models: 'scripts/app/models',
             views: 'scripts/app/views'
+        },
+        shim: {
+            mocha: {
+                history: 'history'
+            }
         }
     });
 })(require);
