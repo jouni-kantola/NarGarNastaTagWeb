@@ -8,22 +8,8 @@
             view.render();
         });
     }
-
-    require.config({
-        //By default load any module IDs from js/lib
-        baseUrl: './scripts/lib',
-        paths: {
-            app: '../app',
-            jquery: 'jquery-2.0.3.min',
-            history: 'jquery.history',
-            ajaxify: 'ajaxify-html5-modified',
-            xdomain: 'jQuery.XDomainRequest',
-            oompa: 'oompa-loompa',
-            rivets: 'rivets.min'
-        }
-    });
-
-    require(['jquery', 'history', 'ajaxify', 'rivets'], function($, history, ajaxify, rivets) {
+    
+    require(['config'], function(config) {
         var viewPath = getCurrentViewPath();
         boostrapView(viewPath);
     });

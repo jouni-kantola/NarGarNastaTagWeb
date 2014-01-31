@@ -5,18 +5,10 @@ define(function(require) {
         oompa = require('oompa'),
         rivets = require('rivets'),
         clientCache = require('clientCache'),
-        stations,
-        viewModel = {
-            searchResults: [],
-            from: '',
-            to: ''
-        }
+        viewModel = require('models/search-model');
 
     function populateStations() {
-        var promise = clientCache.getStations();
-        promise.then(function(data){
-            stations = data;
-        });
+        return clientCache.getStations();
         // oompa.get('http://nargarnastatagapi.apphb.com/query/stations')
         //     .then(function(data) {
         //         stations = data;
@@ -29,11 +21,8 @@ define(function(require) {
         console.log(viewModel);
     }
 
-    function renderView() {
-        if (!stations) {
-            populateStations();
-        }
-
+    function renderView(viewModel) {
+        if(viewModel === undefined) throw new Error('viewModel is undefined.');
         $('.search').on('input', function(e) {
             var searchBox = e.target,
                 query = searchBox.value.toLowerCase(),
@@ -59,12 +48,17 @@ define(function(require) {
             confirmSelection($selection.data('direction'), $selection.text(), $selection.data('id'));
             viewModel.searchResults.splice(0, searchResults.length);
         });
+    }
 
+    function bind(viewModel){
         rivets.bind($('#content'), {
             model: viewModel
         });
     }
+
     return {
-        render: renderView
+        populate: populateStations,
+        render: renderView,
+        bind: bind
     };
 });
