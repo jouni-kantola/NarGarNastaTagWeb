@@ -43,7 +43,7 @@ define(['cacheConfig', 'cookieStore'], function(cacheConfig, cookieStore) {
                     anObject = {
                         aProperty: 'withValue'
                     },
-                    expectedCookie = cookieName + '=' + JSON.stringify(anObject) + ';';
+                    expectedCookie = cookieName + '=' + JSON.stringify(anObject);
 
                 fakeAndStub(cookieName);
 
@@ -57,7 +57,30 @@ define(['cacheConfig', 'cookieStore'], function(cacheConfig, cookieStore) {
 
         describe('saveCookie()', function() {});
 
-        describe('deleteCookie()', function() {});
+        describe('deleteCookie()', function() {
+            it('should expire and thereby delete cookie', function() {
+                function fakeAndStub(cookieName) {
+                    var otherCookies = '01_another_cookie1=anotherCookie1Value;02_another_cookie2=anotherCookie2Value;';
+                    otherCookies.split(';').forEach(function(cookie) {
+                        document.cookie = cookie.trim();
+                    });
+                    sandbox.stub(cacheConfig, 'cookieName', cookieName);
+                }
+
+                var cookieName = 'test_cookie',
+                    expectedCookie = cookieName + '=cookiesValue';
+
+                fakeAndStub(cookieName);
+
+                document.cookie = expectedCookie;
+                document.cookie.split(';').length.should.equal(3);
+                cookieStore.deleteCookie();
+                document.cookie.split(';').length.should.equal(2);
+                document.cookie.split(';').forEach(function(cookie){
+                    cookie.should.not.contain(cookieName);
+                });
+            });
+        });
     });
 
 });
