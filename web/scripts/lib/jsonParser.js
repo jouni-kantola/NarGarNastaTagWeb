@@ -11,13 +11,12 @@ define([], function() {
     function deserialize(stringifiedValue) {
         try {
             if (JSON) {
-                var routes = JSON.parse(stringifiedValue);
-                return routes;
+                return JSON.parse(stringifiedValue);
             } else {
                 return {};
             }
         } catch (ex) {
-            console.log('Cannot deserialize routes.');
+            console.log('Cannot deserialize: ' + stringifiedValue);
         }
     }
 

@@ -3,7 +3,7 @@ require.config({
         app: '../../../scripts/app',
         lib: '../../scripts/lib',
         framework: '../../../tests/scripts/vendor',
-        tests: 'tests/scripts/tests'
+        specs: 'tests/scripts/specs'
     },
     shim: {
         mocha: {
@@ -16,12 +16,9 @@ require.config({
 define(['app/config'], function(config) {
     var should = chai.should();
     mocha.setup('bdd');
-    require([
-            'tests/search-tests',
-            'tests/clientCache-tests'
-        ],
-        function() {
-            mocha.run();
-        });
-
+    require(
+        [
+            'specs/search.spec',
+            'specs/clientCache.spec'
+        ], mocha.run);
 });

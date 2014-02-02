@@ -1,18 +1,18 @@
 define(['require', 'jquery', 'oompa', 'rivets', 'ajaxify', 'clientCache', 'models/search-model'], function(require, $, oompa, rivets, ajaxify, clientCache, viewModel) {
     'use strict';
 
-    function populateStations() {
-        return clientCache.getStations();
+    function populate() {
         // oompa.get('http://nargarnastatagapi.apphb.com/query/stations')
         //     .then(function(data) {
         //         stations = data;
+        //         clientCache.cacheStations(stations);
         //     });
+        return clientCache.getStations();
     }
 
     function confirmSelection(controlId, text, id) {
         $('#' + controlId).val(text);
         viewModel[controlId] = id;
-        console.log(viewModel);
     }
 
     function renderView(stations) {
@@ -53,7 +53,7 @@ define(['require', 'jquery', 'oompa', 'rivets', 'ajaxify', 'clientCache', 'model
     }
 
     return {
-        populate: populateStations,
+        populate: populate,
         render: renderView,
         bind: bind
     };

@@ -10,7 +10,9 @@
             ajaxify: 'scripts/lib/ajaxify-html5-modified',
             oompa: 'scripts/lib/oompa-loompa',
             clientCache: 'scripts/lib/clientCache',
+            cacheConfig: 'scripts/lib/clientCache-config',
             jsonParser: 'scripts/lib/jsonParser',
+            can: 'scripts/lib/can',
             models: 'scripts/app/models',
             views: 'scripts/app/views'
         },

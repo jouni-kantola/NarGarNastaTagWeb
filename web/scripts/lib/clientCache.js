@@ -1,55 +1,55 @@
-define(['q', 'jsonParser'], function(Q, jsonParser) {
+define(['q', 'jsonParser', 'cacheConfig', 'can'], function(Q, jsonParser, cacheConfig, can) {
     'use strict';
-
-    var cachePrefix = "ngnt",
-        stationsKey = "_stations",
-        localStorageKey = cachePrefix + stationsKey,
-        cookieName = 'NT_FAVOURITE_ROUTES';
 
     function getStations() {
         // TODO: Update to sessionStorage
+        var stringifiedStations;
         if (window.localStorage) {
-            return jsonParser.deserialize(window.localStorage.getItem(stationsKey));
+            stringifiedStations = window.localStorage.getItem(cacheConfig.stationsStorageKey);
+        }
+        return stringifiedStations ? jsonParser.deserialize(stringifiedStations) : [];
+    }
+
+    function cacheStations(stations) {
+        // TODO: Update to sessionStorage
+        if (window.localStorage) {
+            window.localStorage.setItem(cacheConfig.stationsStorageKey, jsonParser.serialize(stations));
         }
     }
 
-    function saveRoutes(routes) {
-        if (window.localStorage) {
-            window.localStorage.setItem(localStorageKey, jsonParser.serialize(routes));
+    function cacheFavourites(routes) {
+        if (can.use.localStorage) {
+            window.localStorage.setItem(cacheConfig.localStorageKey, jsonParser.serialize(routes));
         } else {
             saveCookie(routes);
         }
     }
 
-    function readRoutes() {
-        if (window.localStorage) {
-            return jsonParser.serialize(window.localStorage.getItem(localStorageKey));
+    function getFavourites() {
+        var stringifiedRoutes;
+        if (can.use.localStorage) {
+            stringifiedRoutes = window.localStorage.getItem(cacheConfig.favouritesStorageKey); 
         } else {
-            readCookie(routes);
+            stringifiedRoutes = readCookie();
         }
+        return stringifiedRoutes ? jsonParser.serialize(stringifiedRoutes) : [];
     }
 
-    return {
-        getStations: getStations,
-        saveRoutes: saveRoutes,
-        migrateCaching: migrateCaching
-    };
-
     function migrateCaching() {
-        if (!window.localStorage || jsonParser.serialize(window.localStorage.getItem(localStorageKey))) return;
+        if (!can.use.localStorage || jsonParser.serialize(window.localStorage.getItem(cacheConfig.favouritesStorageKey))) return;
         var existingCookie = readCookie();
         if (existingCookie) {
-            saveRoutes(existingCookie);
-            readCookie();
+            cacheFavourites(existingCookie);
+            deleteCookie();
         }
     }
 
     function saveCookie(routes) {
         var cookieText = jsonParser.serialize(routes);
         var expiryDate = new Date();
-        expiryDate.setDate(expiryDate.getYear() + 30);
+        expiryDate.setDate(expiryDate.getYear() + cacheConfig.cookieLifeTime);
         var formattedValue = escape(cookieText) + '; expires=' + expiryDate.toUTCString();
-        document.cookie = cookieName + "=" + formattedValue;
+        document.cookie = cacheConfig.cookieName + "=" + formattedValue;
     }
 
     function readCookie() {
@@ -58,7 +58,7 @@ define(['q', 'jsonParser'], function(Q, jsonParser) {
             var x = browserCookies[i].substr(0, browserCookies[i].indexOf('='));
             var y = browserCookies[i].substr(browserCookies[i].indexOf('=') + 1);
             x = x.replace(/^\s+|\s+$/g, '');
-            if (x === cookieName) {
+            if (x === cacheConfig.cookieName) {
                 var cookie = unescape(y);
                 if (cookie) {
                     return jsonParser.deserialize(cookie);
@@ -69,11 +69,18 @@ define(['q', 'jsonParser'], function(Q, jsonParser) {
         }
     }
 
-    function remove() {
+    function deleteCookie() {
         var expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() - 1);
         var formattedValue = '; expires=' + expiryDate.toUTCString();
-        document.cookie = cookieName + "=" + formattedValue;
+        document.cookie = cacheConfig.cookieName + "=" + formattedValue;
     }
+
+    return {
+        cacheStations: cacheStations,
+        getStations: getStations,
+        cacheFavourites: cacheFavourites,
+        migrateCaching: migrateCaching
+    };
 
 });

@@ -1,13 +1,16 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <title>Tests</title>
+    <title>#NarGarNastaTag - UI Tests</title>
     <link rel="stylesheet" href="mocha.css"/>
   </head>
   <body>
     <div id="mocha"></div>
     <script src="scripts/vendor/mocha.js"></script>
-    <script src="scripts/vendor/chai.js"></script>
-    <script data-main="scripts/tests/test-runner.js" src="../scripts/vendor/require.js"></script>
+    <script src="scripts/vendor/chai.js"></script>    
+    <script src="scripts/vendor/sinon-chai.js"></script>
+    <script src="scripts/vendor/sinon-1.7.3.js"></script>
+
+    <script data-main="scripts/specs/test-runner.js" src="../scripts/vendor/require.js"></script>
   </body>
 </html>
