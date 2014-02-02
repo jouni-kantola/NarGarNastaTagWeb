@@ -19,7 +19,7 @@ define(['q', 'jsonParser', 'cacheConfig', 'can'], function(Q, jsonParser, cacheC
 
     function cacheFavourites(routes) {
         if (can.use.localStorage) {
-            window.localStorage.setItem(cacheConfig.localStorageKey, jsonParser.serialize(routes));
+            saveToStorage(cacheConfig.localStorageKey, jsonParser.serialize(routes));
         } else {
             saveCookie(routes);
         }
@@ -28,7 +28,7 @@ define(['q', 'jsonParser', 'cacheConfig', 'can'], function(Q, jsonParser, cacheC
     function getFavourites() {
         var stringifiedRoutes;
         if (can.use.localStorage) {
-            stringifiedRoutes = window.localStorage.getItem(cacheConfig.favouritesStorageKey); 
+            stringifiedRoutes = window.localStorage.getItem(cacheConfig.favouritesStorageKey);
         } else {
             stringifiedRoutes = readCookie();
         }
@@ -36,12 +36,31 @@ define(['q', 'jsonParser', 'cacheConfig', 'can'], function(Q, jsonParser, cacheC
     }
 
     function migrateCaching() {
-        if (!can.use.localStorage || jsonParser.serialize(window.localStorage.getItem(cacheConfig.favouritesStorageKey))) return;
-        var existingCookie = readCookie();
-        if (existingCookie) {
-            cacheFavourites(existingCookie);
+        if (doesNotNeedMigration()) return;
+        var existingFavourites = readCookie();
+        if (existingFavourites) {
+            cacheFavourites(existingFavourites);
             deleteCookie();
         }
+    }
+
+    function doesNotNeedMigration() {
+        return !can.use.localStorage || jsonParser.serialize(window.localStorage.getItem(cacheConfig.favouritesStorageKey));
+    }
+
+    function saveToStorage(key, values, options) {
+        var opt = options || {
+            storage: {
+                localStorage: true,
+                sessionStorage: false
+            }
+        },
+            storage;
+        if (opt.storage.localStorage)
+            storage = window.localStorage;
+        else
+            storage = window.sessionStorage;
+        storage.setItem(key, values);
     }
 
     function saveCookie(routes) {
@@ -54,19 +73,13 @@ define(['q', 'jsonParser', 'cacheConfig', 'can'], function(Q, jsonParser, cacheC
 
     function readCookie() {
         var browserCookies = document.cookie.split(';');
-        for (var i = 0; i < browserCookies.length; i++) {
-            var x = browserCookies[i].substr(0, browserCookies[i].indexOf('='));
-            var y = browserCookies[i].substr(browserCookies[i].indexOf('=') + 1);
-            x = x.replace(/^\s+|\s+$/g, '');
-            if (x === cacheConfig.cookieName) {
-                var cookie = unescape(y);
-                if (cookie) {
-                    return jsonParser.deserialize(cookie);
-                } else {
-                    return undefined;
-                }
-            }
-        }
+        browserCookies.filter(function(cookie) {
+            var key = cookie.substr(0, cookie.indexOf('='));
+            return key.replace(/^\s+|\s+$/g, '') === cacheConfig.cookieName;
+        }).map(function(cookie) {
+            var value = cookie.substr(0, cookie.indexOf('=') + 1);
+            return value ? unescape(value) : undefined;
+        });
     }
 
     function deleteCookie() {

@@ -18,6 +18,7 @@ define(['app/config'], function(config) {
     mocha.setup('bdd');
     require(
         [
+            'specs/cookieStore.spec',
             'specs/search.spec',
             'specs/clientCache.spec'
         ], mocha.run);

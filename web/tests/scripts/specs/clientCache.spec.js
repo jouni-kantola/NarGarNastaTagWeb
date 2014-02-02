@@ -69,6 +69,24 @@ define(['cacheConfig', 'clientCache', 'can'], function(cacheConfig, clientCache,
                 sandbox.restore();
 
             });
+
+            it('should handle save, read and delete cookie when cookies are used as cache', function() {
+                var cookieName = 'test_cookie',
+                    routes = {
+                        route: 'a route'
+                    };
+                
+                sandbox.stub(can.use, 'localStorage', false);
+                sandbox.stub(document, 'cookie', '');
+                sandbox.stub(cacheConfig, 'cookieName', cookieName);
+                sandbox.stub(clientCache, 'doesNotNeedMigration', false);
+
+                clientCache.cacheFavourites(routes);
+                document.cookie.should.equal(cookieName + '=' + escape(JSON.stringify(routes)));
+                clientCache.migrateCache();
+                sandbox.restore();
+
+            });
         });
     });
 
