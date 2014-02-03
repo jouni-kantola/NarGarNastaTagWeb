@@ -1,7 +1,7 @@
 define(['cacheConfig', 'jsonParser'], function(cacheConfig, jsonParser) {
     'use strict';
 
-    function saveCookie(serializable) {
+    function put(serializable) {
         var cookieText = jsonParser.serialize(serializable);
         var expiryDate = new Date();
         expiryDate.setDate(expiryDate.getYear() + cacheConfig.cookieLifeTime);
@@ -9,7 +9,7 @@ define(['cacheConfig', 'jsonParser'], function(cacheConfig, jsonParser) {
         document.cookie = cacheConfig.cookieName + "=" + formattedValue;
     }
 
-    function readCookie() {
+    function get() {
         var cookies = document.cookie.split(';');
         return cookies.reduce(function(previous, cookie) {
             var name = cookie.substr(0, cookie.indexOf('='));
@@ -21,7 +21,7 @@ define(['cacheConfig', 'jsonParser'], function(cacheConfig, jsonParser) {
         });
     }
 
-    function deleteCookie() {
+    function remove() {
         var expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() - 1);
         var formattedValue = '; expires=' + expiryDate.toUTCString();
@@ -29,9 +29,9 @@ define(['cacheConfig', 'jsonParser'], function(cacheConfig, jsonParser) {
     }
 
     return {
-        saveCookie: saveCookie,
-        readCookie: readCookie,
-        deleteCookie: deleteCookie
+        put: put,
+        get: get,
+        remove: remove
     };
 
 });
