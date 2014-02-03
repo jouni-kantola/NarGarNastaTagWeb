@@ -1,4 +1,4 @@
-define(['cacheConfig', 'clientCache', 'can'], function(cacheConfig, clientCache, can) {
+define(['cacheConfig', 'clientCache', 'cookieStore', 'can'], function(cacheConfig, clientCache, cookieStore, can) {
     'use strict';
 
     describe('clientCache', function() {
@@ -13,19 +13,21 @@ define(['cacheConfig', 'clientCache', 'can'], function(cacheConfig, clientCache,
         });
 
         describe('cacheStations()', function() {
-            it('should cache stations', function() {
+            it('should cache stations to sessionStorage', function() {
                 var store = {},
                     sessionStorageKey,
                     routes = {
                         route: 'a route'
-                    };
-
-                sandbox.stub(window.localStorage, 'setItem', function(key, value) {
+                    },
+                    expected;
+                sandbox.stub(can.use, 'sessionStorage', true);
+                sandbox.stub(window.sessionStorage, 'setItem', function(key, value) {
                     store[key] = value;
                     sessionStorageKey = key;
                 });
                 clientCache.cacheStations(routes);
-                store[sessionStorageKey].should.equal(JSON.stringify(routes));
+                expected = JSON.parse(store[sessionStorageKey]);
+                expected.should.deep.equal(routes);
             });
         });
 
@@ -59,35 +61,52 @@ define(['cacheConfig', 'clientCache', 'can'], function(cacheConfig, clientCache,
                     routes = {
                         route: 'a route'
                     };
-                
+
                 sandbox.stub(can.use, 'localStorage', false);
-                sandbox.stub(document, 'cookie', '');
                 sandbox.stub(cacheConfig, 'cookieName', cookieName);
+                var putStub = sandbox.stub(cookieStore, 'put', function(value) {
+                    JSON.stringify(value).should.equal(JSON.stringify(routes));
+                });
 
                 clientCache.cacheFavourites(routes);
-                document.cookie.should.equal(cookieName + '=' + escape(JSON.stringify(routes)));
+                putStub.should.have.been.calledWith(routes);
+
                 sandbox.restore();
-
             });
+        });
 
-            it('should handle save, read and delete cookie when cookies are used as cache', function() {
+        describe('migrateCaching()', function() {
+            it('should shift caching from cookies to localStorage', function() {
                 var cookieName = 'test_cookie',
                     routes = {
                         route: 'a route'
-                    };
-                
-                sandbox.stub(can.use, 'localStorage', false);
-                sandbox.stub(document, 'cookie', '');
+                    },
+                    store = {},
+                    localStorageKey;
+
                 sandbox.stub(cacheConfig, 'cookieName', cookieName);
-                sandbox.stub(clientCache, 'doesNotNeedMigration', false);
+                var getStub = sandbox.stub(cookieStore, 'get', function() {
+                    return routes;
+                });
+                var removeStub = sandbox.stub(cookieStore, 'remove');
+                sandbox.stub(can.use, 'localStorage', true);
+                sandbox.stub(localStorage, 'getItem', function(value) {
+                    return undefined;
+                });
+                var setItemStub = sandbox.stub(window.localStorage, 'setItem', function(key, value) {
+                    store[key] = value;
+                    localStorageKey = key;
+                });
 
-                clientCache.cacheFavourites(routes);
-                document.cookie.should.equal(cookieName + '=' + escape(JSON.stringify(routes)));
-                clientCache.migrateCache();
+                clientCache.migrateCaching();
+
+                getStub.should.have.been.calledBefore(setItemStub);
+                setItemStub.should.have.been.calledWithMatch(localStorageKey, routes.route);
+                removeStub.should.have.been.calledAfter(setItemStub);
+                JSON.parse(store[localStorageKey]).route.should.deep.equal(routes.route);
+
                 sandbox.restore();
-
             });
         });
     });
-
 });

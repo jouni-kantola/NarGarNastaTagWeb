@@ -3,7 +3,7 @@ define([], function() {
 
     return {
         stationsStorageKey: 'ngnt_stations',
-        favouritesStorageKey: 'ngnt_favourites',
+        localStorageKey: 'ngnt_favourites',
         cookieName: 'NT_FAVOURITE_ROUTES',
         cookieLifeTime: 30
     };

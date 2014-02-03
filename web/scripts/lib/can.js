@@ -3,7 +3,8 @@ define([], function() {
 
     return {
         use: {
-            localStorage: (window && window.localStorage) || false
+            localStorage: (window && window.localStorage) || false,
+            sessionStorage: (window && window.sessionStorage) || false
         }
     };
 
