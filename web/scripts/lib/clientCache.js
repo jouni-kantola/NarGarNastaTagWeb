@@ -11,7 +11,6 @@ define(['q', 'jsonParser', 'cacheConfig', 'cookieStore', 'can'], function(Q, jso
     }
 
     function cacheStations(stations) {
-        // TODO: Update to sessionStorage
         if (can.use.sessionStorage) {
             saveToStorage(cacheConfig.stationsStorageKey, stations, { storage: { sessionStorage: true } });
         }
