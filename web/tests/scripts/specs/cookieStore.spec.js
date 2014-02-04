@@ -110,6 +110,62 @@ define(['cacheConfig', 'cookieStore'], function(cacheConfig, cookieStore) {
                 var deserializedCookie = cookieStore.get();
                 routes.should.deep.equal(deserializedCookie);
             });
+
+            it('should clear cookie and return undefined if deserialization fails', function() {
+                function fakeAndStub(cookieName) {
+                    var otherCookies = '01_another_cookie1=anotherCookie1Value;02_another_cookie2=anotherCookie2Value;';
+                    otherCookies.split(';').forEach(function(cookie) {
+                        document.cookie = cookie.trim();
+                    });
+                    sandbox.stub(cacheConfig, 'cookieName', cookieName);
+                }
+
+                var cookieName = 'test_cookie',
+                    expectedCookie = cookieName + '=wi","thValue';
+
+                fakeAndStub(cookieName);
+
+                document.cookie = expectedCookie;
+                chai.expect(cookieStore.get()).to.be.an('undefined');
+            });
+
+            it('should clear cookie and return undefined if cookie is empty', function() {
+                function fakeAndStub(cookieName) {
+                    var otherCookies = '01_another_cookie1=anotherCookie1Value;02_another_cookie2=anotherCookie2Value;';
+                    otherCookies.split(';').forEach(function(cookie) {
+                        document.cookie = cookie.trim();
+                    });
+                    sandbox.stub(cacheConfig, 'cookieName', cookieName);
+                }
+
+                var cookieName = 'test_cookie',
+                    expectedCookie = cookieName + '=';
+
+                fakeAndStub(cookieName);
+
+                document.cookie = expectedCookie;
+                chai.expect(cookieStore.get()).to.be.an('undefined');
+            });
+
+            it('should clear cookie and return undefined if cookie is not valid JSON', function() {
+                function fakeAndStub(cookieName) {
+                    var otherCookies = '01_another_cookie1=anotherCookie1Value;02_another_cookie2=anotherCookie2Value;';
+                    otherCookies.split(';').forEach(function(cookie) {
+                        document.cookie = cookie.trim();
+                    });
+                    sandbox.stub(cacheConfig, 'cookieName', cookieName);
+                }
+
+                var cookieName = 'test_cookie',
+                    expectedCookie = cookieName + '=a';
+
+                fakeAndStub(cookieName);
+
+                document.cookie = expectedCookie;
+                document.cookie.split(';').length.should.equal(3);
+                chai.expect(cookieStore.get()).to.be.an('undefined');
+                document.cookie.split(';').length.should.equal(2);
+            });
         });
 
         describe('put()', function() {

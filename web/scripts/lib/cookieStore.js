@@ -10,14 +10,21 @@ define(['cacheConfig', 'jsonParser'], function(cacheConfig, jsonParser) {
     }
 
     function get() {
-        var cookies = document.cookie.split(';');
+        var cookies = document.cookie.split(';'),
+            cookieValue,
+            deserialized;
         return cookies.reduce(function(previous, cookie) {
             var name = cookie.substr(0, cookie.indexOf('='));
-            if(name.replace(/^\s+|\s+$/g, '') === cacheConfig.cookieName){
-                var value = cookie.substr(cookie.indexOf('=') + 1);
-                return value ? jsonParser.deserialize(unescape(value)) : undefined;
+            if (name.replace(/^\s+|\s+$/g, '') === cacheConfig.cookieName) {
+                cookieValue = cookie.substr(cookie.indexOf('=') + 1);
+                try {
+                    deserialized = jsonParser.deserialize(unescape(cookieValue));
+                } catch (ex) {
+                    console.log("Cannot deserialize cookie with value '" + cookieValue + "'. Cookie will be reset.");
+                    remove();
+                }
             }
-            return undefined;
+            return deserialized;
         });
     }
 

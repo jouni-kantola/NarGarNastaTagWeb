@@ -1,4 +1,4 @@
-define([], function() {
+define(function() {
     'use strict';
 
     function serialize(value) {
@@ -9,14 +9,10 @@ define([], function() {
     }
 
     function deserialize(stringifiedValue) {
-        try {
-            if (JSON) {
-                return JSON.parse(stringifiedValue);
-            } else {
-                return {};
-            }
-        } catch (ex) {
-            console.log('Cannot deserialize: ' + stringifiedValue);
+        if (JSON) {
+            return JSON.parse(stringifiedValue);
+        } else {
+            return {};
         }
     }
 
