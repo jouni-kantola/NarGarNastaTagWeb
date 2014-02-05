@@ -20,6 +20,7 @@ define(['app/config'], function(config) {
         [
             'specs/cookieStore.spec',
             'specs/search.spec',
-            'specs/clientCache.spec'
+            'specs/clientCache.spec',
+            'specs/favourites.spec'
         ], mocha.run);
 });

@@ -14,6 +14,8 @@
             cookieStore: 'scripts/lib/cookieStore',
             jsonParser: 'scripts/lib/jsonParser',
             can: 'scripts/lib/can',
+            tombola: 'scripts/lib/tombola',
+            favourites: 'scripts/app/models/favourites',
             models: 'scripts/app/models',
             views: 'scripts/app/views'
         },

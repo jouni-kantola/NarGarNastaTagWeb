@@ -31,7 +31,7 @@ define(['q', 'jsonParser', 'cacheConfig', 'cookieStore', 'can'], function(Q, jso
         } else {
             stringifiedRoutes = cookieStore.get();
         }
-        return stringifiedRoutes ? jsonParser.serialize(stringifiedRoutes) : [];
+        return stringifiedRoutes ? jsonParser.deserialize(stringifiedRoutes) : [];
     }
 
     function migrateCaching() {
@@ -67,6 +67,7 @@ define(['q', 'jsonParser', 'cacheConfig', 'cookieStore', 'can'], function(Q, jso
     return {
         cacheStations: cacheStations,
         getStations: getStations,
+        getFavourites: getFavourites,
         cacheFavourites: cacheFavourites,
         migrateCaching: migrateCaching
     };
