@@ -1,10 +1,11 @@
-define(['favourites', 'clientCache', 'can'], function(favourites, clientCache, can) {
+define(['favourites', 'clientCache', 'tombola'], function(favourites, clientCache, tombola) {
     'use strict';
 
     describe('trains', function() {
         var sandbox;
         beforeEach(function() {
             sandbox = sinon.sandbox.create();
+			favourites.routes = [];
         });
 
         afterEach(function() {
@@ -41,15 +42,45 @@ define(['favourites', 'clientCache', 'can'], function(favourites, clientCache, c
                     name: 'station1'
                 },
                     to = {
-                        id: '1',
-                        name: 'station1'
+                        id: '2',
+                        name: 'station2'
                     };
 
-                sinon.stub(clientCache, 'getFavourites', function() {
+                sandbox.stub(clientCache, 'getFavourites', function() {
                     return undefined;
+                });
+                sandbox.stub(clientCache, 'cacheFavourites');
+                favourites.add(from, to);
+                favourites.routes.length.should.equal(1);
+            });
+
+            it('should cache favourites after add', function() {
+                var from = { id: '1', name: 'station1' },
+                    to = { id: '2', name: 'station2' },
+                    routeId = '123',
+                    expected = [{
+                        routeId: routeId,
+                        from: from,
+                        to: [to]
+                    }],
+                    cache = {
+                        favourites: undefined
+                    };
+
+                sandbox.stub(tombola, 'id', function() {
+                    return routeId;
+                });
+                sandbox.stub(clientCache, 'getFavourites', function() {
+                    return undefined;
+                });
+                sandbox.stub(clientCache, 'cacheFavourites', function(favourites) {
+                    cache.favourites = favourites;
+
                 });
                 favourites.add(from, to);
                 favourites.routes.length.should.equal(1);
+                favourites.routes.should.deep.equal(expected);
+                cache.favourites.should.deep.equal(expected);
             });
         });
     });

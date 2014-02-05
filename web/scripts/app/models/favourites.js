@@ -6,7 +6,7 @@ define(['q', 'clientCache', 'tombola'], function(Q, clientCache, tombola) {
     }
 
     function cache(routes) {
-        clientCache.cacheFavourites(caches);
+        clientCache.cacheFavourites(routes);
     }
 
     function createFavorite(from, to) {
@@ -16,19 +16,18 @@ define(['q', 'clientCache', 'tombola'], function(Q, clientCache, tombola) {
                 id: from.id.toUpperCase(),
                 name: from.name
             },
-            to: {
+            to: [{
                 id: to.id.toUpperCase(),
                 name: to.name
-            }
+            }]
         };
     }
 
     function add(favourites, from, to) {
-        var deferred = Q.deferred;
-        var favourite = createFavorite(from, to);
+        var favourite = createFavorite(from, to),
+            refreshCache = true;
         if (favourites.length === 0) {
             favourites.push(favourite);
-            Q.resolve(favourites);
         } else {
             var fromExisting = favourites.reduce(function(previous, existing) {
                 return existing.from.id === favourite.from.id ? existing : previous;
@@ -41,11 +40,12 @@ define(['q', 'clientCache', 'tombola'], function(Q, clientCache, tombola) {
                 });
                 if (!toExisting) {
                     fromExisting.to.push(favourite);
+                } else {
+                    refreshCache = false;
                 }
             }
-            Q.resolve(favourites);
         }
-        return deferred.promise;
+        return refreshCache;
     }
 
     return {
@@ -54,11 +54,11 @@ define(['q', 'clientCache', 'tombola'], function(Q, clientCache, tombola) {
             this.routes = populateFromCache();
         },
         add: function(from, to, callback) {
-            add(this.routes, from, to)
-                .then(function(favourites) {
-                    callback(favourites);
-                    cache(favourites);
-                });
+            var refreshCache = add(this.routes, from, to);
+            if(callback) callback(this.routes);
+            if (refreshCache) {
+                cache(this.routes);
+            }
         }
     };
 });
