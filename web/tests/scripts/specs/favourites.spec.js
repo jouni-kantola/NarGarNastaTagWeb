@@ -5,7 +5,7 @@ define(['favourites', 'clientCache', 'tombola'], function(favourites, clientCach
         var sandbox;
         beforeEach(function() {
             sandbox = sinon.sandbox.create();
-			favourites.routes = [];
+            favourites.routes = [];
         });
 
         afterEach(function() {
@@ -55,11 +55,17 @@ define(['favourites', 'clientCache', 'tombola'], function(favourites, clientCach
             });
 
             it('should cache favourites after add', function() {
-                var from = { id: '1', name: 'station1' },
-                    to = { id: '2', name: 'station2' },
-                    routeId = '123',
-                    expected = [{
+                var routeId = '123',
+                    from = {
+                        id: '1',
+                        name: 'station1'
+                    },
+                    to = {
                         routeId: routeId,
+                        id: '2',
+                        name: 'station2'
+                    },
+                    expected = [{
                         from: from,
                         to: [to]
                     }],
@@ -81,6 +87,100 @@ define(['favourites', 'clientCache', 'tombola'], function(favourites, clientCach
                 favourites.routes.length.should.equal(1);
                 favourites.routes.should.deep.equal(expected);
                 cache.favourites.should.deep.equal(expected);
+            });
+
+            it('should not refresh cache favourites if route exists', function() {
+                var routeId = '123',
+                    from = {
+                        id: '1',
+                        name: 'station1'
+                    },
+                    to = {
+                        routeId: routeId,
+                        id: '2',
+                        name: 'station2'
+                    },
+                    expected = [{
+                        from: from,
+                        to: [to]
+                    }],
+                    cache = {
+                        favourites: undefined
+                    };
+
+                sandbox.stub(tombola, 'id', function() {
+                    return routeId;
+                });
+                sandbox.stub(clientCache, 'getFavourites', function() {
+                    return undefined;
+                });
+                var cacheFavouritesStub = sandbox.stub(clientCache, 'cacheFavourites', function(favourites) {
+                    cache.favourites = favourites;
+
+                });
+                favourites.add(from, to);
+                favourites.add(from, to);
+                chai.expect(cacheFavouritesStub.should.have.been.calledOnce);
+            });
+
+            it('should not add route if already exists', function() {
+                var routeId = '123',
+                    from = {
+                        id: '1',
+                        name: 'station1'
+                    },
+                    to = {
+                        routeId: routeId,
+                        id: '2',
+                        name: 'station2'
+                    },
+                    expected = [{
+                        from: from,
+                        to: [to]
+                    }];
+
+                sandbox.stub(tombola, 'id', function() {
+                    return routeId;
+                });
+                sandbox.stub(clientCache, 'getFavourites', function() {
+                    return undefined;
+                });
+                sandbox.stub(clientCache, 'cacheFavourites');
+                favourites.add(from, to);
+                favourites.add(from, to);
+                favourites.routes.should.deep.equal(expected);
+            });
+
+            it('should add route connected to previously added station', function() {
+                var routeId = '123',
+                    from = {
+                        id: '1',
+                        name: 'station1'
+                    },
+                    to1 = {
+                        routeId: routeId,
+                        id: '2',
+                        name: 'station2'
+                    },
+                    to2 = {
+                        routeId: routeId,
+                        id: '3',
+                        name: 'station3'
+                    },
+                    expected = [{
+                        from: from,
+                        to: [to1, to2]
+                    }];
+                sandbox.stub(tombola, 'id', function() {
+                    return routeId;
+                });
+                sandbox.stub(clientCache, 'getFavourites', function() {
+                    return undefined;
+                });
+                sandbox.stub(clientCache, 'cacheFavourites');
+                favourites.add(from, to1);
+                favourites.add(from, to2);
+                favourites.routes.should.deep.equal(expected);
             });
         });
     });

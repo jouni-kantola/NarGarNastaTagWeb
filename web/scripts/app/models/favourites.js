@@ -11,12 +11,12 @@ define(['q', 'clientCache', 'tombola'], function(Q, clientCache, tombola) {
 
     function createFavorite(from, to) {
         return {
-            routeId: tombola.id(),
             from: {
                 id: from.id.toUpperCase(),
                 name: from.name
             },
             to: [{
+                routeId: tombola.id(),
                 id: to.id.toUpperCase(),
                 name: to.name
             }]
@@ -35,11 +35,14 @@ define(['q', 'clientCache', 'tombola'], function(Q, clientCache, tombola) {
             if (!fromExisting) {
                 favourites.push(favourite);
             } else {
-                var toExisting = fromExisting.to.reduce(function(previous, existing) {
-                    return favourite.to.id === existing.to.id ? true : false;
+                // var toExisting = fromExisting.to.reduce(function(previous, existing) {
+                //     return favourite.to[0].id === existing.id ? true : previous;
+                // });
+                var toExisting = fromExisting.to.filter(function(existing) {
+                    return favourite.to[0].id === existing.id;
                 });
-                if (!toExisting) {
-                    fromExisting.to.push(favourite);
+                if (toExisting.length === 0) {
+                    fromExisting.to.push(favourite.to[0]);
                 } else {
                     refreshCache = false;
                 }
@@ -55,7 +58,7 @@ define(['q', 'clientCache', 'tombola'], function(Q, clientCache, tombola) {
         },
         add: function(from, to, callback) {
             var refreshCache = add(this.routes, from, to);
-            if(callback) callback(this.routes);
+            if (callback) callback(this.routes);
             if (refreshCache) {
                 cache(this.routes);
             }
