@@ -1,4 +1,4 @@
-define(['q', 'clientCache', 'tombola'], function(Q, clientCache, tombola) {
+define(['q', 'lazy', 'clientCache', 'tombola'], function(Q, Lazy, clientCache, tombola) {
     'use strict';
 
     function populateFromCache() {
@@ -26,27 +26,36 @@ define(['q', 'clientCache', 'tombola'], function(Q, clientCache, tombola) {
     function add(favourites, from, to) {
         var favourite = createFavorite(from, to),
             refreshCache = true;
-        if (favourites.length === 0) {
+        var fromExisting = new Lazy(favourites).find(function(existing) {
+            return existing.from.id === favourite.from.id;
+        });
+        if (!fromExisting) {
             favourites.push(favourite);
         } else {
-            var fromExisting = favourites.reduce(function(previous, existing) {
-                return existing.from.id === favourite.from.id ? existing : previous;
+            var toExisting = new Lazy(fromExisting.to).find(function(existing) {
+                return favourite.to[0].id === existing.id;
             });
-            if (!fromExisting) {
-                favourites.push(favourite);
+            if (!toExisting) {
+                fromExisting.to.push(favourite.to[0]);
             } else {
-                // var toExisting = fromExisting.to.reduce(function(previous, existing) {
-                //     return favourite.to[0].id === existing.id ? true : previous;
-                // });
-                var toExisting = fromExisting.to.filter(function(existing) {
-                    return favourite.to[0].id === existing.id;
-                });
-                if (toExisting.length === 0) {
-                    fromExisting.to.push(favourite.to[0]);
-                } else {
-                    refreshCache = false;
-                }
+                refreshCache = false;
             }
+        }
+        return refreshCache;
+    }
+
+    function remove(favourites, routeId) {
+        var refreshCache = false,
+            fromExisting = new Lazy(favourites).find(function(existing) {
+                return new Lazy(existing.to).some(function(destination) {
+                    return destination.routeId === routeId;
+                });
+            });
+        if (fromExisting) {
+            refreshCache = true;
+            fromExisting.to = new Lazy(fromExisting.to).filter(function(destination) {
+                return destination.routeId !== routeId;
+            }).toArray();
         }
         return refreshCache;
     }
@@ -58,6 +67,13 @@ define(['q', 'clientCache', 'tombola'], function(Q, clientCache, tombola) {
         },
         add: function(from, to, callback) {
             var refreshCache = add(this.routes, from, to);
+            if (callback) callback(this.routes);
+            if (refreshCache) {
+                cache(this.routes);
+            }
+        },
+        remove: function(routeId, callback) {
+            var refreshCache = remove(this.routes, routeId);
             if (callback) callback(this.routes);
             if (refreshCache) {
                 cache(this.routes);

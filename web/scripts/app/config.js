@@ -5,6 +5,7 @@
             jquery: 'scripts/vendor/jquery-2.0.3.min',
             history: 'scripts/vendor/jquery.history',
             q: 'scripts/vendor/q',
+            lazy: 'scripts/vendor/lazy',
             rivets: 'scripts/vendor/rivets.min',
             xdomain: 'scripts/vendor/jQuery.XDomainRequest',
             ajaxify: 'scripts/lib/ajaxify-html5-modified',
@@ -20,8 +21,11 @@
             views: 'scripts/app/views'
         },
         shim: {
-            mocha: {
-                history: 'history'
+            'history': {
+                exports: 'history'
+            },
+            'lazy': {
+                exports: 'Lazy'
             }
         }
     });
