@@ -8,12 +8,17 @@
 <body>
     <div id="content" data-view="views/search">
         <h1>Favoritsträckor</h1>
+        <ul id="favourites">
+            <li rv-each-favourite="model.favourites" class="favourite">
+                <span rv-data-from-id="favourite.from.id">{ favourite.from.name }</span> till <span rv-data-to-id="favourite.to.id">{ favourite.to.name }</span>
+            </li>
+        </ul>
         <input id="from" type="text" placeholder="Varifrån" class="search" rv-data-from-id="model.from" />
         <input id="to" type="text" placeholder="...och vart ska du?" class="search" rv-data-to-id="model.to" />
 
         <ul id="searchResults">
             <li rv-each-station="model.searchResults">
-                <span><a href="#" class="station" rv-data-id="station.Id" rv-data-direction="station.direction">{ station.Name }</a></span>
+                <span><a href="#" class="station" rv-data-id="station.id" rv-data-direction="station.direction">{ station.name }</a></span>
             </li>
         </ul>
 

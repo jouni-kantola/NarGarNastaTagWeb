@@ -4,6 +4,7 @@
         paths: {
             jquery: 'scripts/vendor/jquery-2.0.3.min',
             history: 'scripts/vendor/jquery.history',
+            bacon: '/scripts/vendor/bacon.min',
             q: 'scripts/vendor/q',
             lazy: 'scripts/vendor/lazy',
             rivets: 'scripts/vendor/rivets.min',
@@ -14,6 +15,7 @@
             clientCache: 'scripts/lib/clientCache',
             cookieStore: 'scripts/lib/cookieStore',
             jsonParser: 'scripts/lib/jsonParser',
+            bus: 'scripts/lib/bus',
             can: 'scripts/lib/can',
             tombola: 'scripts/lib/tombola',
             favourites: 'scripts/app/models/favourites',
@@ -23,6 +25,9 @@
         shim: {
             'history': {
                 exports: 'history'
+            },
+            'bacon': {
+                exports: 'Bacon'
             },
             'lazy': {
                 exports: 'Lazy'

@@ -18,7 +18,7 @@ define(['q', 'jsonParser', 'cacheConfig', 'cookieStore', 'can'], function(Q, jso
 
     function cacheFavourites(routes) {
         if (can.use.localStorage) {
-            saveToStorage(cacheConfig.localStorageKey, routes);
+            saveToStorage(cacheConfig.favouritesStorageKey, routes);
         } else {
             cookieStore.put(routes);
         }

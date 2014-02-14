@@ -1,60 +1,78 @@
-define(['require', 'jquery', 'oompa', 'rivets', 'ajaxify', 'clientCache', 'models/search-model'], function(require, $, oompa, rivets, ajaxify, clientCache, viewModel) {
-    'use strict';
+define(['require', 'jquery', 'oompa', 'rivets', 'ajaxify', 'clientCache', 'models/search-model', 'favourites', 'lazy', 'bacon', 'bus'],
+    function(require, $, oompa, rivets, ajaxify, clientCache, viewModel, favourites, Lazy, Bacon, bus) {
+        'use strict';
 
-    function populate() {
-        // oompa.get('http://nargarnastatagapi.apphb.com/query/stations')
-        //     .then(function(data) {
-        //         stations = data;
-        //         clientCache.cacheStations(stations);
-        //     });
-        return clientCache.getStations();
-    }
+        function populate() {
+            // oompa.get('http://nargarnastatagapi.apphb.com/query/stations')
+            //     .then(function(data) {
+            //         stations = data;
+            //         clientCache.cacheStations(stations);
+            //     });
+            return clientCache.getStations();
+        }
 
-    function confirmSelection(controlId, text, id) {
-        $('#' + controlId).val(text);
-        viewModel[controlId] = id;
-    }
+        function confirmSelection(controlId, text, id) {
+            $('#' + controlId).val(text);
+            viewModel.setSelection(controlId, id).then(function(selection) {
+                favourites.add(selection.from, selection.to);
+            });
+        }
 
-    function renderView(stations) {
-        if (stations === undefined) throw new Error('stations is undefined.');
-        viewModel.stations = stations;
-        $('.search').on('input', function(e) {
-            var searchBox = e.target,
-                query = searchBox.value.toLowerCase(),
-                searchBoxIsEmpty = query.length === 0;
-
-            if (searchBoxIsEmpty) {
-                viewModel.searchResults.splice(0, searchResults.length);
-            } else {
-                viewModel.searchResults.splice(0, searchResults.length);
-                viewModel.stations.filter(function(station) {
-                    return station.Name.toLowerCase().indexOf(query) === 0;
-                }).forEach(function(station) {
-                    station.direction = searchBox.id;
-                    viewModel.searchResults.push(station);
+        function setup() {
+            $('.search')
+                .asEventStream('input')
+                .map(function(event) {
+                    return search(event.target.value.toLowerCase())
+                        .map(function(station) {
+                            return {
+                                direction: event.target.id,
+                                name: station.Name,
+                                id: station.Id
+                            };
+                        }).toArray();
+                })
+                .assign(function(searchResults) {
+                    viewModel.searchResults = searchResults;
                 });
-            }
-            viewModel.searchResults.length = 0;
-        });
+        }
 
-        $('#searchResults').on('click', '.station', function(e) {
-            e.preventDefault();
-            var $selection = $(this);
-            confirmSelection($selection.data('direction'), $selection.text(), $selection.data('id'));
-            viewModel.searchResults.splice(0, searchResults.length);
-        });
-        return viewModel;
-    }
+        function search(query) {
+            return new Lazy(viewModel.stations).filter(function(station) {
+                return !!query && station.Name.toLowerCase().indexOf(query) === 0;
+            });
+        }
 
-    function bind(viewModel) {
-        rivets.bind($('#content'), {
-            model: viewModel
-        });
-    }
+        function renderView(stations) {
+            if (stations === undefined) throw new Error('stations is undefined.');
+            viewModel.stations = stations;
+            setup();
 
-    return {
-        populate: populate,
-        render: renderView,
-        bind: bind
-    };
-});
+            $('#searchResults').on('click', '.station', function(e) {
+                e.preventDefault();
+                var $selection = $(this);
+                confirmSelection($selection.data('direction'), $selection.text(), $selection.data('id'));
+                viewModel.searchResults = [];
+            });
+            return viewModel;
+        }
+
+        function bind(viewModel) {
+            rivets.bind($('#content'), {
+                model: viewModel
+            });
+            bus.when.filter(function(message) {
+                return message.msg === 'data-favourite-added';
+            })
+            .onValue(function(msg) {
+                console.log(msg);
+                viewModel.favourites = msg.data;
+            });
+
+        }
+
+        return {
+            populate: populate,
+            render: renderView,
+            bind: bind
+        };
+    });

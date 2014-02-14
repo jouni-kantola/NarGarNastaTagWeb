@@ -1,7 +1,7 @@
 define(['favourites', 'clientCache', 'tombola'], function(favourites, clientCache, tombola) {
     'use strict';
 
-    describe('trains', function() {
+    describe('favourites', function() {
         var sandbox;
         beforeEach(function() {
             sandbox = sinon.sandbox.create();
@@ -13,27 +13,27 @@ define(['favourites', 'clientCache', 'tombola'], function(favourites, clientCach
             sandbox.restore();
         });
 
-        describe('populate()', function() {
-            it('should get favourites from storage', function() {
-                var expected = {
-                    favourites: []
-                },
-                    getFavouritesStub = sandbox.stub(clientCache, 'getFavourites', function() {
-                        return expected;
-                    });
-                favourites.populate();
-                favourites.routes.should.deep.equal(expected);
-            });
+        // describe('populate()', function() {
+        //     it('should get favourites from storage', function() {
+        //         var expected = {
+        //             favourites: []
+        //         },
+        //             getFavouritesStub = sandbox.stub(clientCache, 'getFavourites', function() {
+        //                 return expected;
+        //             });
+        //         favourites.populate();
+        //         favourites.routes.should.deep.equal(expected);
+        //     });
 
-            it('should create empty list if no cached favourites exists', function() {
-                var expected = [];
-                sandbox.stub(clientCache, 'getFavourites', function() {
-                    return undefined;
-                });
-                favourites.populate();
-                favourites.routes.should.deep.equal(expected);
-            });
-        });
+        //     it('should create empty list if no cached favourites exists', function() {
+        //         var expected = [];
+        //         sandbox.stub(clientCache, 'getFavourites', function() {
+        //             return undefined;
+        //         });
+        //         favourites.populate();
+        //         favourites.routes.should.deep.equal(expected);
+        //     });
+        // });
 
         describe('remove()', function() {
             it('should remove route by id', function() {
@@ -60,12 +60,13 @@ define(['favourites', 'clientCache', 'tombola'], function(favourites, clientCach
                     };
 
                 sandbox.stub(favourites, 'routes', routes);
+                sandbox.stub(clientCache, 'getFavourites', function() {
+                    return routes;
+                });
                 sandbox.stub(clientCache, 'cacheFavourites', function(favourites) {
                     cache.favourites = favourites;
-
                 });
                 favourites.remove(routeId);
-                favourites.routes.should.deep.equal(expected);
                 cache.favourites.should.deep.equal(expected);
             });
 
@@ -108,14 +109,19 @@ define(['favourites', 'clientCache', 'tombola'], function(favourites, clientCach
                     to = {
                         id: '2',
                         name: 'station2'
+                    },
+                    cache = {
+                        favourites: undefined
                     };
 
                 sandbox.stub(clientCache, 'getFavourites', function() {
                     return undefined;
                 });
-                sandbox.stub(clientCache, 'cacheFavourites');
+                var cacheFavouritesStub = sandbox.stub(clientCache, 'cacheFavourites', function(favourites) {
+                    cache.favourites = favourites;
+                });
                 favourites.add(from, to);
-                favourites.routes.length.should.equal(1);
+                cache.favourites.length.should.equal(1);
             });
 
             it('should cache favourites after add', function() {
@@ -148,8 +154,6 @@ define(['favourites', 'clientCache', 'tombola'], function(favourites, clientCach
 
                 });
                 favourites.add(from, to);
-                favourites.routes.length.should.equal(1);
-                favourites.routes.should.deep.equal(expected);
                 cache.favourites.should.deep.equal(expected);
             });
 
@@ -176,42 +180,13 @@ define(['favourites', 'clientCache', 'tombola'], function(favourites, clientCach
                     return routeId;
                 });
                 sandbox.stub(clientCache, 'getFavourites', function() {
-                    return undefined;
+                    return expected;
                 });
                 var cacheFavouritesStub = sandbox.stub(clientCache, 'cacheFavourites', function(favourites) {
                     cache.favourites = favourites;
                 });
                 favourites.add(from, to);
-                favourites.add(from, to);
-                chai.expect(cacheFavouritesStub.should.have.been.calledOnce);
-            });
-
-            it('should not add route if already exists', function() {
-                var routeId = '123',
-                    from = {
-                        id: '1',
-                        name: 'station1'
-                    },
-                    to = {
-                        routeId: routeId,
-                        id: '2',
-                        name: 'station2'
-                    },
-                    expected = [{
-                        from: from,
-                        to: [to]
-                    }];
-
-                sandbox.stub(tombola, 'id', function() {
-                    return routeId;
-                });
-                sandbox.stub(clientCache, 'getFavourites', function() {
-                    return undefined;
-                });
-                sandbox.stub(clientCache, 'cacheFavourites');
-                favourites.add(from, to);
-                favourites.add(from, to);
-                favourites.routes.should.deep.equal(expected);
+                chai.expect(cacheFavouritesStub.should.not.have.been.called);
             });
 
             it('should add route connected to previously added station', function() {
@@ -233,17 +208,25 @@ define(['favourites', 'clientCache', 'tombola'], function(favourites, clientCach
                     expected = [{
                         from: from,
                         to: [to1, to2]
-                    }];
+                    }],
+                    cache = {
+                        favourites: undefined
+                    };
                 sandbox.stub(tombola, 'id', function() {
                     return routeId;
                 });
                 sandbox.stub(clientCache, 'getFavourites', function() {
-                    return undefined;
+                    return [{
+                        from: from,
+                        to: [to1]
+                    }];
                 });
-                sandbox.stub(clientCache, 'cacheFavourites');
+                sandbox.stub(clientCache, 'cacheFavourites', function(favourites) {
+                    cache.favourites = favourites;
+                });
                 favourites.add(from, to1);
                 favourites.add(from, to2);
-                favourites.routes.should.deep.equal(expected);
+                cache.favourites.should.deep.equal(expected);
             });
         });
     });
