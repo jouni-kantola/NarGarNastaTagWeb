@@ -14,7 +14,10 @@ define(['require', 'jquery', 'oompa', 'rivets', 'ajaxify', 'clientCache', 'model
         function confirmSelection(controlId, text, id) {
             $('#' + controlId).val(text);
             viewModel.setSelection(controlId, id).then(function(selection) {
-                favourites.add(selection.from, selection.to);
+                bus.publish('ui-favourite-added', {
+                    from: selection.from,
+                    to: selection.to
+                });
             });
         }
 
@@ -42,10 +45,9 @@ define(['require', 'jquery', 'oompa', 'rivets', 'ajaxify', 'clientCache', 'model
                 viewModel.searchResults = [];
             });
 
-            $('#favourites').on('click', '.unfavourize', function(e){
+            $('#favourites').on('click', '.unfavourize', function(e) {
                 e.preventDefault();
-                var $selection = $(this);
-                favourites.remove($selection.data('routeId'));
+                bus.publish('ui-favourite-deleted', $(this).data('routeId'));
             });
         }
 
@@ -55,30 +57,31 @@ define(['require', 'jquery', 'oompa', 'rivets', 'ajaxify', 'clientCache', 'model
             });
         }
 
+        function list(favourites) {
+            viewModel.favourites = new Lazy(favourites).map(function(favourite) {
+                return new Lazy(favourite.to).map(function(destination) {
+                    return {
+                        from: favourite.from,
+                        to: destination
+                    };
+                });
+            }).flatten().toArray();
+        }
+
         function renderView(stations) {
             if (stations === undefined) throw new Error('stations is undefined.');
             viewModel.stations = stations;
+            bus.subscribe('data-favourites-listed', function(msg) {
+                list(msg.data);
+            });
             bus.subscribe('data-favourite-added', function(msg) {
-                viewModel.favourites = new Lazy(msg.data).map(function(favourite) {
-                    return new Lazy(favourite.to).map(function(destination) {
-                        return {
-                            from: favourite.from,
-                            to: destination
-                        };
-                    });
-                }).flatten().toArray();
+                list(msg.data);
             });
             bus.subscribe('data-favourite-deleted', function(msg) {
-                viewModel.favourites = new Lazy(msg.data).map(function(favourite) {
-                    return new Lazy(favourite.to).map(function(destination) {
-                        return {
-                            from: favourite.from,
-                            to: destination
-                        };
-                    });
-                }).flatten().toArray();
+                list(msg.data);
             });
             attachSearch();
+            bus.publish('ui-favourites-listed');
             return viewModel;
         }
 

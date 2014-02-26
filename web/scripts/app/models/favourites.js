@@ -38,6 +38,7 @@ define(['q', 'lazy', 'clientCache', 'tombola', 'bus'], function(Q, Lazy, clientC
                 refreshCache = false;
             }
         }
+
         return {
             refreshCache: refreshCache,
             data: favourites
@@ -64,23 +65,39 @@ define(['q', 'lazy', 'clientCache', 'tombola', 'bus'], function(Q, Lazy, clientC
         };
     }
 
-    function publish(msg, data) {
-        bus.publish(msg, data);
-    }
+    bus.subscribe('ui-favourites-listed', function() {
+        bus.publish('data-favourites-listed', clientCache.getFavourites());
+    });
+
+    bus.subscribe('ui-favourite-added', function(message) {
+        var result = add(message.data.from, message.data.to);
+        if (result.refreshCache) {
+            cache(result.data);
+            bus.publish('data-favourite-added', result.data);
+        }
+    });
+
+    bus.subscribe('ui-favourite-deleted', function(message) {
+        var result = remove(message.data);
+        if (result.refreshCache) {
+            cache(result.data);
+            bus.publish('data-favourite-deleted', result.data);
+        }
+    });
 
     return {
         add: function(from, to) {
             var result = add(from, to);
             if (result.refreshCache) {
                 cache(result.data);
-                publish('data-favourite-added', result.data);
+                bus.publish('data-favourite-added', result.data);
             }
         },
         remove: function(routeId) {
             var result = remove(routeId);
             if (result.refreshCache) {
                 cache(result.data);
-                publish('data-favourite-deleted', result.data);
+                bus.publish('data-favourite-deleted', result.data);
             }
         }
     };
