@@ -221,9 +221,7 @@ define(['require', 'history'], function(require) {
                             if (typeof(viewPath) === 'undefined') return;
                             require([viewPath], function(view) {
                                 if (typeof(view) === 'undefined' || !view.hasOwnProperty('render')) return;
-                                var data = view.populate();
-                                var viewModel = view.render(data);
-                                view.bind(viewModel);
+                                view.render();
                             });
                         });
             }); // end onStateChange
