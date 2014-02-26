@@ -11,6 +11,7 @@
         <ul id="favourites">
             <li rv-each-favourite="model.favourites" class="favourite">
                 <span rv-data-from-id="favourite.from.id">{ favourite.from.name }</span> till <span rv-data-to-id="favourite.to.id">{ favourite.to.name }</span>
+                <a class="unfavourize" href="#" rv-data-route-id="favourite.to.routeId">x</a>
             </li>
         </ul>
         <input id="from" type="text" placeholder="Varifrån" class="search" rv-data-from-id="model.from" />

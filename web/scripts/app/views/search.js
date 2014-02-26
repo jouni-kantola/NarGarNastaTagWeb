@@ -18,7 +18,7 @@ define(['require', 'jquery', 'oompa', 'rivets', 'ajaxify', 'clientCache', 'model
             });
         }
 
-        function setup() {
+        function attachSearch() {
             $('.search')
                 .asEventStream('input')
                 .map(function(event) {
@@ -34,6 +34,19 @@ define(['require', 'jquery', 'oompa', 'rivets', 'ajaxify', 'clientCache', 'model
                 .assign(function(searchResults) {
                     viewModel.searchResults = searchResults;
                 });
+
+            $('#searchResults').on('click', '.station', function(e) {
+                e.preventDefault();
+                var $selection = $(this);
+                confirmSelection($selection.data('direction'), $selection.text(), $selection.data('id'));
+                viewModel.searchResults = [];
+            });
+
+            $('#favourites').on('click', '.unfavourize', function(e){
+                e.preventDefault();
+                var $selection = $(this);
+                favourites.remove($selection.data('routeId'));
+            });
         }
 
         function search(query) {
@@ -45,14 +58,27 @@ define(['require', 'jquery', 'oompa', 'rivets', 'ajaxify', 'clientCache', 'model
         function renderView(stations) {
             if (stations === undefined) throw new Error('stations is undefined.');
             viewModel.stations = stations;
-            setup();
-
-            $('#searchResults').on('click', '.station', function(e) {
-                e.preventDefault();
-                var $selection = $(this);
-                confirmSelection($selection.data('direction'), $selection.text(), $selection.data('id'));
-                viewModel.searchResults = [];
+            bus.subscribe('data-favourite-added', function(msg) {
+                viewModel.favourites = new Lazy(msg.data).map(function(favourite) {
+                    return new Lazy(favourite.to).map(function(destination) {
+                        return {
+                            from: favourite.from,
+                            to: destination
+                        };
+                    });
+                }).flatten().toArray();
             });
+            bus.subscribe('data-favourite-deleted', function(msg) {
+                viewModel.favourites = new Lazy(msg.data).map(function(favourite) {
+                    return new Lazy(favourite.to).map(function(destination) {
+                        return {
+                            from: favourite.from,
+                            to: destination
+                        };
+                    });
+                }).flatten().toArray();
+            });
+            attachSearch();
             return viewModel;
         }
 
@@ -60,14 +86,6 @@ define(['require', 'jquery', 'oompa', 'rivets', 'ajaxify', 'clientCache', 'model
             rivets.bind($('#content'), {
                 model: viewModel
             });
-            bus.when.filter(function(message) {
-                return message.msg === 'data-favourite-added';
-            })
-            .onValue(function(msg) {
-                console.log(msg);
-                viewModel.favourites = msg.data;
-            });
-
         }
 
         return {

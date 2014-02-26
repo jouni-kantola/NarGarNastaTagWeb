@@ -80,6 +80,7 @@ define(['q', 'lazy', 'clientCache', 'tombola', 'bus'], function(Q, Lazy, clientC
             var result = remove(routeId);
             if (result.refreshCache) {
                 cache(result.data);
+                publish('data-favourite-deleted', result.data);
             }
         }
     };
