@@ -7,9 +7,15 @@
 
 <body>
     <div id="content" data-view="views/index">
-        <h1>När går nästa tåg v2 - Hem</h1>
+        <h1>När går nästa tåg</h1>
+        <ul id="favourites">
+            <li rv-each-favourite="model.favourites" class="favourite">
+                <a href="routes.html" rv-data-from-id="favourite.from.id" rv-data-to-id="favourite.to.id" class="route">
+                    <span rv-data-from-id="favourite.from.id">{ favourite.from.name }</span> till <span rv-data-to-id="favourite.to.id">{ favourite.to.name }</span>
+                </a>     
+            </li>
+        </ul>
         <a href="search.html?favoriter">Mina favoriter</a>
-        
     </div>
 </body>
 <script type="text/javascript" src="scripts/vendor/require.js" data-main="scripts/app/bootstrap.js"></script>

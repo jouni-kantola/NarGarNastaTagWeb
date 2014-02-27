@@ -34,11 +34,11 @@ define(['require', 'history'], function(require) {
         $(function() {
             /* Application Specific Variables */
             var contentSelector = '#content',
-                $content = $(contentSelector).filter(':first'),
+                $content = $(contentSelector + ':first'),
                 contentNode = $content.get(0),
-                $menu = $('#menu,#nav,nav:first,.nav:first').filter(':first'),
-                activeClass = 'active selected current youarehere',
-                activeSelector = '.active,.selected,.current,.youarehere',
+                $menu = $('#menu:first').filter(':first'),
+                activeClass = 'active selected current',
+                activeSelector = '.active,.selected,.current',
                 menuChildrenSelector = '> li,> ul > li',
                 /* Application Generic Variables */
                 $window = $(window),
@@ -113,7 +113,7 @@ define(['require', 'history'], function(require) {
                 // Prepare
                 var $data = $(documentHtml(html)),
                     $dataBody = $data.find('.document-body:first'),
-                    $dataContent = $dataBody.find(contentSelector).filter(':first'),
+                    $dataContent = $dataBody.find(contentSelector + ':first'),
                     view = $dataContent.data('view'),
                     relativeUrl = url.replace(rootUrl, ''),
                     $menuChildren, contentHtml, $scripts;
@@ -169,26 +169,18 @@ define(['require', 'history'], function(require) {
                     window.pageTracker._trackPageview(relativeUrl);
                 }
 
-                // Inform ReInvigorate of a state change
-                if (typeof window.reinvigorate !== 'undefined' && typeof window.reinvigorate.ajax_track !== 'undefined') {
-                    window.reinvigorate.ajax_track(url);
-                    // ^ we use the full url here as that is what reinvigorate supports
-                }
-
                 return view;
             };
 
             // Ajaxify Helper
             $.fn.ajaxify = function() {
-                // Prepare
-                var $this = $(this);
-
                 // Ajaxify
-                $this.find('a:internal:not(.no-ajaxy)').click(function(event) {
+                var $this = $(this);
+                $this.on('click', 'a:internal:not(.no-ajaxy)', function(event) {
                     // Prepare
                     var $this = $(this),
                         url = $this.attr('href'),
-                        title = $this.attr('title') || null;
+                        title = $this.attr('title') || '';
 
                     // Continue as normal for cmd clicks etc
                     if (event.which == 2 || event.metaKey) {
@@ -196,9 +188,9 @@ define(['require', 'history'], function(require) {
                     }
 
                     // Ajaxify this link
+                    event.preventDefault();
                     document.title = title;
                     History.pushState(null, title, url);
-                    event.preventDefault();
                     return false;
                 });
 

@@ -1,10 +1,13 @@
-define(['bacon', 'lazy'], function(Bacon, Lazy) {
+define(['bacon', 'lazy', 'can'], function(Bacon, Lazy, can) {
     'use strict';
 
     var bus = new Bacon.Bus(),
         subscriptions = {};
 
     bus.onValue(function(message) {
+        if(can.use.debug){
+            console.log(message);
+        }
         new Lazy(subscriptions[message.msg]).each(function(eventHandler) {
             eventHandler(message);
         });
