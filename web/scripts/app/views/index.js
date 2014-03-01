@@ -1,12 +1,11 @@
 define([
     'jquery',
-    'oompa',
     'rivets',
     'ajaxify',
     'bus',
     'models/index-model',
     'favourites'
-], function($, oompa, rivets, ajaxify, bus, viewModel) {
+], function($, rivets, ajaxify, bus, viewModel) {
     'use strict';
 
     var body = document.getElementById('content');
@@ -22,11 +21,7 @@ define([
         }).flatten().toArray();
     }
 
-    function render() {
-        rivets.bind(body, {
-            model: viewModel
-        });
-
+    function subscribe(){
         bus.subscribe('data-favourites-listed', function(msg) {
             list(msg.data);
         });
@@ -36,15 +31,26 @@ define([
         bus.subscribe('data-favourite-deleted', function(msg) {
             list(msg.data);
         });
+    }
+
+    function render() {
+        subscribe();
         bus.publish('ui-favourites-listed');
 
         $('#favourites').on('click', '.route', function(e) {
             e.preventDefault();
-            bus.publish('ui-favourite-deleted', $(this).data('routeId'));
+            var $this = $(this),
+                href = $this.prop('href'),
+                from = $this.data('from-id'),
+                to = $this.data('to-id'),
+                url = href + '?/from/' + from + '/to/' + to;
+            $this.prop('href', url);
+            return true;
         });
 
-        // oompa.get('http://nargarnastatagapi.apphb.com/query/date/20140125/route/825/from/74,U/to/74,CST');
-            // oompa.getMany(['http://nargarnastatagapi.apphb.com/query/date/20140125/route/825/from/74,U/to/74,CST', 'http://nargarnastatagapi.apphb.com/query/date/20140125/route/825/from/74,U/to/74,CST']);
+        rivets.bind(body, {
+            model: viewModel
+        });
     }
 
     return {

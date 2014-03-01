@@ -28,13 +28,14 @@ define(['q', 'jquery', 'xdomain'], function(Q, $) {
         });
     }
 
-    function getMany(urls, options, callback) {
+    function getMany(urls, callback, options) {
         return urls.map(function(url) {
             return get(url, options);
         }).map(function(promise) {
             return function() {
                 return promise.then(function(data) {
-                    callback(data);
+                    if(data.length > 0)
+                        callback(data);
                 });
             };
         }).reduce(Q.when, Q);

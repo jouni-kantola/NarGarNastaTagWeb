@@ -176,7 +176,7 @@ define(['require', 'history'], function(require) {
             $.fn.ajaxify = function() {
                 // Ajaxify
                 var $this = $(this);
-                $this.on('click', 'a:internal:not(.no-ajaxy)', function(event) {
+                $('#content').on('click', 'a:internal:not(.no-ajaxy)', function(event) {
                     // Prepare
                     var $this = $(this),
                         url = $this.attr('href'),

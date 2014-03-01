@@ -6,8 +6,15 @@
 </head>
 
 <body>
-    <div id="content" data-view="views/index">
+    <div id="content" data-view="views/routes">
         <h1>Tågsträcka</h1>
+        <ul id="routes">
+            <li rv-each-route="model.routes" class="route">
+                <a href="train.html" rv-data-route-no="route.RouteNo" class="route">
+                    <span>{ route.FromStation.StationName }</span> till <span>{ route.ToStation.StationName }</span>
+                </a>     
+            </li>
+        </ul>
         <a href="index.html">Hem</a>
     </div>
 </body>
