@@ -1,12 +1,7 @@
-'use strict';
 var XMLHttpRequest = require('xhr2');
 
-//require("babel/polyfill");
-
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
-// A-> $http function is implemented in order to follow the standard Adapter pattern
 function $http(url) {
-console.log(url)
+    'use strict';
     // A small example of object
     var core = {
 
@@ -70,7 +65,6 @@ console.log(url)
             return core.ajax('DELETE', url, args);
         }
     };
-};
-// End A
+}
 
 module.exports = $http;
