@@ -10,5 +10,11 @@
   "license": "ISC",
   "dependencies": {
     "xhr2": "^0.1.2"
+  },
+  "devDependencies": {
+    "babel-core": "~5.1.13",
+    "webpack": "~1.8.10",
+    "babel-loader": "~5.0.0",
+    "postcss-loader": "~0.4.1"
   }
 }
