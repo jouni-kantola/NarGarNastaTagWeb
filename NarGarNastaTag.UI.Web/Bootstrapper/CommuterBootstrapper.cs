@@ -32,10 +32,7 @@ namespace NarGarNastaTag.UI.Web.Bootstrapper
 
         protected override void ConfigureRequestContainer(Nancy.TinyIoc.TinyIoCContainer container, NancyContext context)
         {
-            container.AutoRegister(new List<Assembly>
-                {
-                    typeof (ITrainRoute).Assembly
-                }, false);
+            container.AutoRegister(new List<Assembly> { typeof (ITrainRoute).Assembly });
             base.ConfigureRequestContainer(container, context);
         }
 
