@@ -44,7 +44,7 @@
     </Reference>
     <Reference Include="NarGarNastaTag.API.Contract, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\NarGarNastaTagAPI\NarGarNastaTag.API\bin\NarGarNastaTag.API.Contract.dll</HintPath>
+      <HintPath>..\dependencies\NarGarNastaTag.API.Contract.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
