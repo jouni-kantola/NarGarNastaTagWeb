@@ -109,3 +109,6 @@ UpgradeLog*.XML
 
 # Include dependencies
 !dependencies/**/**
+
+# npm
+*/node_modules/**
