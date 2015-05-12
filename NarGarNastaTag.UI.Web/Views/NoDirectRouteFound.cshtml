@@ -1,10 +1,10 @@
-﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+﻿@inherits NancyRazorViewBase<dynamic>
 @{
     Layout = "Shared/_Layout.cshtml";
 }
 @section Description {<meta name="description" content="Inga direktavgångar hittades för den aktuella sträckan." />}
 @section AdditionalMetaTags {<meta name="robots" content="noindex">}
-@section Title {<title>När går nästa tåg? - Direktavgångar hittades inte</title>}           
+@section Title {<title>När går nästa tåg? - Direktavgångar hittades inte</title>}
 @section Heading{<h1>Direktavgångar saknas</h1>}
 @section AdditionalScripts{
     <script type="text/javascript">

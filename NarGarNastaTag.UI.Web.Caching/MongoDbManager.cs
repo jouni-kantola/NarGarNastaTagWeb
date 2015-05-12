@@ -1,11 +1,14 @@
-﻿using MongoDB.Driver;
+﻿using System.Threading.Tasks;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using NarGarNastaTag.API.Contract;
 
 namespace NarGarNastaTag.UI.Web.Caching
 {
-    public class MongoDbManager<T>
+    public class MongoDbManager<T> where T : ITrainRoute
     {
-        private readonly MongoCollection<T> _collection;
- 
+        private readonly IMongoCollection<T> _collection;
+
         public static MongoDbManager<T> MongoDb(string collectionName)
         {
             try
@@ -22,19 +25,18 @@ namespace NarGarNastaTag.UI.Web.Caching
         {
             var url = new MongoUrl(settings.MongoDb);
             var client = new MongoClient(url);
-            var server = client.GetServer();
-            var database = server.GetDatabase(url.DatabaseName);
+            var database = client.GetDatabase(url.DatabaseName);
             _collection = database.GetCollection<T>(collectionName);
         }
 
         public void Save(T document)
         {
-            _collection.Save(document);
+            _collection.InsertOneAsync(document).Wait();
         }
 
         public T Find(string id)
         {
-            return _collection.FindOneByIdAs<T>(id);
+            return _collection.Find(arg => arg.Id == id).SingleOrDefaultAsync().Result;
         }
     }
 }

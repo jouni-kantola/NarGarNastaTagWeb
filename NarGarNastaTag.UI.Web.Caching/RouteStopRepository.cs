@@ -1,4 +1,5 @@
-﻿using NarGarNastaTag.API.Contract;
+﻿using System.Threading.Tasks;
+using NarGarNastaTag.API.Contract;
 
 namespace NarGarNastaTag.UI.Web.Caching
 {
