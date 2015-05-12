@@ -1,6 +1,6 @@
 /// <reference path="declarations/javascript.global.functions.d.ts" />
 
-module Commuter.Trains.Common {
+module Commuter.Common {
     export class UrlHelper {
         public static getQueryStringParameterByName(url, name) {
             var match = RegExp('[?&]' + name + '=([^&]*)').exec(url);

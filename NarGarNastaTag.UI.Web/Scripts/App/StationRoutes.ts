@@ -1,6 +1,6 @@
-/// <reference path="interfaces.d.ts" />
+/// <reference path="Interfaces.ts" />
 
-module Commuter.Trains.Entities {
+module Commuter.Entities {
     export class StationRoutes implements Interfaces.IStationRoutes {
         from: { name: string; id: string; };
         to: { routeId: string; name: string; id: string; }[];

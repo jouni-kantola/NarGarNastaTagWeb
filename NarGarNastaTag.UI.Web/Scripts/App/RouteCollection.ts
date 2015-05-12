@@ -1,7 +1,9 @@
-/// <reference path="interfaces.d.ts" />
+/// <reference path="Interfaces.ts" />
 /// <reference path="StationRoutes.ts" />
 
-module Commuter.Trains.Entities {
+var StationRoutes = require('./StationRoutes');
+
+module Commuter.Entities {
 
     export class RouteCollection implements Interfaces.IKnowFavouriteRoutes {
         repository: Interfaces.IRouteRepository;
@@ -16,9 +18,9 @@ module Commuter.Trains.Entities {
         add(route: Interfaces.IRoute, callback: Function) {
             var fromStationCode: string = route.from.id.toUpperCase();
             var toStationCode: string = route.to.id.toUpperCase();
-            var containsFromStation: bool;
+            var containsFromStation;
             var fromStationIndex: number;
-            var needsUpdate: bool;
+            var needsUpdate;
             if (this.favouriteRoutes) {
                 for (var i: number = this.favouriteRoutes.length - 1; i >= 0; i--) {
                     if (this.favouriteRoutes[i].from.id.toUpperCase() === fromStationCode) {

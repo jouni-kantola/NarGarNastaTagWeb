@@ -1,9 +1,11 @@
 /// <reference path="declarations/javascript.global.functions.d.ts" />
 /// <reference path="declarations/jquery.d.ts" />
-/// <reference path="interfaces.d.ts" />
+/// <reference path="Interfaces.ts" />
 /// <reference path="Logger.ts" />
 
-module Commuter.Trains.Command {
+var Logger = require('./Logger');
+
+module Commuter.Command {
     export class RouteToJsonParser implements Interfaces.IParseRoutes {
         parser: JSON;
         serialize(routes: any): string {
@@ -16,7 +18,7 @@ module Commuter.Trains.Command {
                 var routes = JSON.parse(stringifiedRoutes);
                 return routes;
             }catch(ex){
-                var log = new Common.Logger();
+                var log = new Logger();
                 log.log('Cannot deserialize routes.', ex);
             }
         }

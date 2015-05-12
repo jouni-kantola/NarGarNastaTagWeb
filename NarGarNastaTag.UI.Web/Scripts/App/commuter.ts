@@ -1,14 +1,15 @@
 /// <reference path="declarations/jquery.d.ts" />
 /// <reference path="declarations/javascript.global.functions.d.ts" />
-/// <reference path="interfaces.d.ts" />
+/// <reference path="Interfaces.ts" />
 /// <reference path="IoC.ts" />
 /// <reference path="Route.ts" />
 /// <reference path="Logger.ts" />
 
-module Commuter.Trains {
-    (function () {
-        Common.IoC.setup();
-    })();
+var Interfaces = require('./Interfaces');
+var IoC = require('./IoC');
+var Route = require('./Route');
+
+module Commuter.Common {
 
     export class CommuterController {
         repository: Interfaces.IRouteRepository;
@@ -18,15 +19,16 @@ module Commuter.Trains {
         apiUrl: string;
         
         constructor() {
-            this.repository = Common.IoC.resolve("IRouteRepository");
-            this.idGenerator = Common.IoC.resolve("IGenerateId");
-            this.routeHandler = Common.IoC.resolve("IKnowFavouriteRoutes");
-            this.remoteQueryExecutor = Common.IoC.resolve("IQueryRemoteRoutes");
+            IoC.setup();
+            this.repository = IoC.resolve("IRouteRepository");
+            this.idGenerator = IoC.resolve("IGenerateId");
+            this.routeHandler = IoC.resolve("IKnowFavouriteRoutes");
+            this.remoteQueryExecutor = IoC.resolve("IQueryRemoteRoutes");
             this.apiUrl = window['apiUrl'];
         }
 
         add(fromName: string, fromId: string, toName: string, toId: string, callback: Function) {
-            var route: Interfaces.IRoute = new Entities.Route();
+            var route: Interfaces.IRoute = new Route();
             route.routeId = this.idGenerator.getId();
             route.from.id = fromId.toUpperCase();
             route.from.name = fromName;
@@ -56,7 +58,7 @@ module Commuter.Trains {
             try {
                 this.routeHandler.favouriteRoutes.forEach(function (route) {
                     route.to.forEach(function (toStation) {
-                        var displayRoute = new Entities.Route();
+                        var displayRoute = new Route();
                         displayRoute.routeId = toStation.routeId;
                         displayRoute.to.id = toStation.id;
                         displayRoute.to.name = toStation.name;

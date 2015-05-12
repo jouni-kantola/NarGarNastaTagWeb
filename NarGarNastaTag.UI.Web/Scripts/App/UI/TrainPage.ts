@@ -3,12 +3,11 @@
 /// <reference path="../UrlHelper.ts" />
 /// <reference path="../Logger.ts" />
 
+var commuterController = require('../Commuter');
+var UrlHelper = require('../UrlHelper');
+var Logger = require('../Logger');
+
 module Commuter.UI {
-    var commuterController: Commuter.Trains.CommuterController;
-    (function ($, controller) {
-        $(document).bind('pageinit', function () {
-        });
-    })(jQuery, commuterController || (commuterController = new Commuter.Trains.CommuterController()));
 
     export module TrainPage {
         export function load() {
@@ -18,11 +17,13 @@ module Commuter.UI {
                 theme: 'a',
                 html: ""
             });
-            getStops(() => $.mobile.loading('hide'));
+            getStops(function(){
+                $.mobile.loading('hide');
+            });
         }
 
-        private getStops(callback: Function) {
-            var routeInfo: string = Commuter.Trains.Common.UrlHelper.getQueryStringParameterByName(window.location.href, 'route');
+        function getStops(callback: Function) {
+            var routeInfo: string = UrlHelper.getQueryStringParameterByName(window.location.href, 'route');
             var date: string = routeInfo.split(',')[0];
             var trainNo: string = routeInfo.split(',')[1];
             var numberOfStations: number = -1;
@@ -33,7 +34,7 @@ module Commuter.UI {
                     if (!context.data.query.results) return;
                     if (!context.data.query.results.tr) return;
                     context.data.query.results.tr.shift();
-                    var displayedHeader: bool = false;
+                    var displayedHeader = false;
                     $.each(context.data.query.results.tr, function () {
                         var $newElement = $("#stopOnRouteItemTemplate").clone();
                         $newElement.prop('id', commuterController.idGenerator.getId());
@@ -104,7 +105,7 @@ module Commuter.UI {
                             callback();
                         }
                         catch (ex) {
-                            var logger = new Commuter.Trains.Common.Logger();
+                            var logger = new Logger();
                             logger.dump({ message: "Error when showing detailed train info", error: ex, source: this });
                         }
                     });

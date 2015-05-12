@@ -28,8 +28,6 @@
             var apiUrl = apiUrl || '@ConfigurationManager.AppSettings["API_URL"]';
         </script>
         @Html.Raw(Bundle.Css().RenderCachedAssetTag("app-ui-css"))
-        @Html.Raw(Bundle.JavaScript().RenderCachedAssetTag("jquery-with-mobile"))
-        @Html.Raw(Bundle.JavaScript().RenderCachedAssetTag("q"))
     </head>
     <body>
         <div @RenderSection("PageId") data-role="page" data-theme="a">
@@ -58,7 +56,9 @@
                     <span class="copyright"></span>
                 </div>
             </div>
-            @Html.Raw(Bundle.JavaScript().RenderCachedAssetTag("app"))
+            @Html.Raw(Bundle.JavaScript().RenderCachedAssetTag("jquery-with-mobile"))
+            @Html.Raw(Bundle.JavaScript().RenderCachedAssetTag("q"))
+            <script src="~/Content/dist/scripts/bundle.js"></script>
             @RenderSection("AdditionalScripts", required: false)
         </div>
     </body>

@@ -1,8 +1,8 @@
 /// <reference path="declarations/javascript.global.functions.d.ts" />
 /// <reference path="declarations/jquery.d.ts" />
-/// <reference path="interfaces.d.ts" />
+/// <reference path="Interfaces.ts" />
 
-module Commuter.Trains.Command {
+module Commuter.Command {
     export class CookieStore implements Interfaces.IRouteRepository {
         private configuration: Interfaces.IConfigureCookieStore;
         private parser: Interfaces.IParseRoutes;

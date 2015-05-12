@@ -1,6 +1,6 @@
-/// <reference path="interfaces.d.ts" />
+/// <reference path="Interfaces.ts" />
 
-module Commuter.Trains.Common {
+module Commuter.Common {
     export class IdRandomizer implements Interfaces.IGenerateId {
 
         getId() { 

@@ -1,6 +1,6 @@
 /// <reference path="declarations/javascript.global.functions.d.ts" />
 
-module Commuter.Trains.Common {
+module Commuter.Common {
     export class Logger {
         public log(errorText: string, exception: any) { 
             if(window.console && console.log)

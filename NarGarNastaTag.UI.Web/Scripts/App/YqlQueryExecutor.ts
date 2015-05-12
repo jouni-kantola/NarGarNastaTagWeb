@@ -1,6 +1,6 @@
-/// <reference path="interfaces.d.ts" />
+/// <reference path="Interfaces.ts" />
 
-module Commuter.Trains.Query {
+module Commuter.Query {
 
     export class YqlQueryExecutor implements Interfaces.IQueryRemoteRoutes {
         query(xmlHttpRequestExecutor: any, url: string, xpath: string, callback: Function) {

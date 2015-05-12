@@ -1,16 +1,15 @@
 ﻿/// <reference path="../declarations/jquery.d.ts" />
 /// <reference path="../declarations/jquery.mobile.d.ts" />
 /// <reference path="../declarations/q.d.ts" />
-/// <reference path="../commuter.ts" />
+/// <reference path="../Commuter.ts" />
 /// <reference path="../UrlHelper.ts" />
 /// <reference path="../Logger.ts" />
 
-var commuterController: Commuter.Trains.CommuterController;
-    (function ($, controller) {
-        $(document).bind('pageinit', function () {
-        });
-    })(jQuery, commuterController || (commuterController = new Commuter.Trains.CommuterController()));
+var CommuterController = require('../Commuter');
+var Logger = require('../Logger');
+var UrlHelper = require('../UrlHelper');
 
+var commuterController: Commuter.Common.CommuterController;
     var RoutesPage = function () {
         this.routeQueue = [];
         this.numberOfRoutesToCheck = -1;
@@ -32,7 +31,7 @@ var commuterController: Commuter.Trains.CommuterController;
                     if (currentTime >= 22 || currentTime <= 5)
                         $('#noRoutesFoundPopup .nighttimeInfo').show();
                     $('#noRoutesFoundPopup').popup('open');
-                    reason && (new Commuter.Trains.Common.Logger()).inform(reason);
+                    reason && (new Logger()).inform(reason);
                 }
                 $.mobile.loading('hide');
             });
@@ -53,7 +52,7 @@ var commuterController: Commuter.Trains.CommuterController;
                 that.numberOfRoutesToCheck = (ctx.data.length) || 1;
                 for (; that.numberOfRoutesChecked < that.numberOfRoutesToCheck; that.numberOfRoutesChecked++) {
                     var queryUri: string = ctx.data.Url || ctx.data[that.numberOfRoutesChecked].Url;
-                    var routeInfo: string = Commuter.Trains.Common.UrlHelper.getQueryStringParameterByName(queryUri, 'train');
+                    var routeInfo: string = UrlHelper.getQueryStringParameterByName(queryUri, 'train');
                     var date: string = routeInfo.split(',')[0];
                     var formattedTrainNo: string = routeInfo.split(',')[1];
                     var route: any = { index: that.numberOfRoutesChecked, routeDate: date, trainNo: formattedTrainNo, fromStationId: fromId, toStationId: toId };
@@ -76,7 +75,8 @@ var commuterController: Commuter.Trains.CommuterController;
             }
             return that.routeQueue.map(that.queryRoute).map(function (query) {
                 return function () {
-                    return query.then(function (data, $.noop) {
+                    var noop = $.noop;
+                    return query.then(function (data, noop) {
                         that.routesFound = true;
                         callback && callback(that.routesFound);
                         that.displayRoute(data, $templateElement, callback);

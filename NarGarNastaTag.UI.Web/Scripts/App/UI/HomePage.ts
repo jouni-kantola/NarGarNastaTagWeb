@@ -1,14 +1,12 @@
 ﻿/// <reference path="../declarations/jquery.d.ts" />
-/// <reference path="../commuter.ts" />
+/// <reference path="../Commuter.ts" />
 /// <reference path="../UrlHelper.ts" />
 /// <reference path="../Logger.ts" />
 
+var commuterController = require('../Commuter');
+var Interfaces = require('../Interfaces');
+
 module Commuter.UI {
-    var commuterController: Commuter.Trains.CommuterController;
-    (function ($, controller) {
-        $(document).bind('pageinit', function () {
-        });
-    })(jQuery, commuterController || (commuterController = new Commuter.Trains.CommuterController()));
 
     export module HomePage {
         export function load() {
@@ -19,7 +17,7 @@ module Commuter.UI {
             });
         }
         function getFavouriteRoutes() {
-            var routes: Commuter.Trains.Interfaces.IRoute[] = commuterController.getRoutes();
+            var routes: Interfaces.IRoute[] = commuterController.getRoutes();
             var $templateElement = $("#favouriteRouteItemTemplate").clone();
             $('#favouriteRoutes').html('').append($templateElement);
             $.each(routes, function () {
