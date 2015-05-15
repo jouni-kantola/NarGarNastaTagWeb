@@ -1,17 +1,17 @@
 /// <reference path="Interfaces.ts" />
 
-module Commuter.Common {
-    export class IdRandomizer implements Interfaces.IGenerateId {
+class IdRandomizer implements Interfaces.IGenerateId {
 
-        getId() { 
-            var partOne = new Date().getTime();
-            var partTwo = 1 + Math.floor((Math.random() * 32767));
-            var partThree = 1 + Math.floor((Math.random() * 32767));
-            return partOne + '-' + partTwo + '-' + partThree;
-        }
+    getId() {
+        var partOne = new Date().getTime();
+        var partTwo = 1 + Math.floor((Math.random() * 32767));
+        var partThree = 1 + Math.floor((Math.random() * 32767));
+        return partOne + '-' + partTwo + '-' + partThree;
+    }
 
-        getRandomRangedInteger(minimum: number, maximum: number) {
-            return Math.floor(Math.random() * (1 + maximum - minimum)) + minimum;
-        }
+    getRandomRangedInteger(minimum: number, maximum: number) {
+        return Math.floor(Math.random() * (1 + maximum - minimum)) + minimum;
     }
 }
+
+export = IdRandomizer;

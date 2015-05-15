@@ -1,15 +1,14 @@
 /// <reference path="Interfaces.ts" />
 
-module Commuter.Entities {
-    export class StationRoutes implements Interfaces.IStationRoutes {
-        from: { name: string; id: string; };
-        to: { routeId: string; name: string; id: string; }[];
+class StationRoutes implements Interfaces.IStationRoutes {
+	from: { name: string; id: string; };
+	to: { routeId: string; name: string; id: string; }[];
 
-        constructor () {
-            this.from = { name: '', id: '' };
-            this.to = new Array();
-            this.to.push({ routeId: '', name: '', id: '' });
-        }
-    }
-
+	constructor() {
+		this.from = { name: '', id: '' };
+		this.to = new Array();
+		this.to.push({ routeId: '', name: '', id: '' });
+	}
 }
+
+export = StationRoutes;

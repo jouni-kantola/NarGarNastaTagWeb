@@ -112,3 +112,6 @@ UpgradeLog*.XML
 
 # npm
 */node_modules/**
+
+# bower
+*/bower_components/**

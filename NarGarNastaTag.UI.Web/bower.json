@@ -1,0 +1,22 @@
+{
+  "name": "NarGarNastaTag.UI.Web",
+  "version": "0.0.0",
+  "homepage": "https://github.com/jouni-kantola/NarGarNastaTagWeb",
+  "authors": [
+    "Jouni Kantola"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery-mobile": "1.3.0",
+    "jquery.xdomainrequest": "~1.0.4",
+    "jquery": "1.9.1",
+    "q": "~2.0.2"
+  }
+}

@@ -6,38 +6,29 @@
 @section Title {<title>När går nästa tåg? - Favoritsträckor</title>}
 @section Heading{<h1>Favoritsträckor</h1>}
 @section AdditionalScripts{
-    <script type="text/javascript">
-        (function ($) {
-            $('#favouritesPage').bind('pageinit', function () {
-                Commuter.UI.FavouritesPage.loading();
-            });
-            $('#favouritesPage').bind('pageshow', function () {
-                Commuter.UI.FavouritesPage.load();
-            });
-        })(jQuery);
-    </script>
+    <script src="~/Content/dist/scripts/favoritesPage.entry.js"></script>
 }
 @section PageId{id="favouritesPage"}
-            <div data-role="popup" id="cannotSaveEqualToAndFromRoute" data-dismissible="false">
-                <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-left">Stäng</a>
-                <p>Du kan ej spara favoriter med samma station för avgång och destination.</p>
-            </div>
-            <div class="newFavouriteForm">
-                <h2>Varifrån och vart vill du resa?</h2>
-                <div data-role="fieldcontain" class="fromStation searchFields">
-                    <input type="search" name="name" id="searchStationFrom" class="searchStations" value="" placeholder="Från ort..." data-mini="true">
-                    <ul class="stations" data-role="listview" data-inset="true" style="display: none;"></ul>
-                </div>
-                <div data-role="fieldcontain" class="toStation searchFields ui-shadow">
-                    <input type="search" name="name" id="searchStationTo" class="searchStations" value="" placeholder="Till ort..." data-mini="true">
-                    <ul class="stations" data-role="listview" data-inset="true" style="display: none;"></ul>
-                </div>
-                <a data-role="button" data-icon="star" id="saveRouteButton" href="#" class="ui-shadow" style="display: none;">Spara sträcka</a>
-                <p>I nuläget sparas favoritsträckor som cookies.</p>
-            </div>
-            <div>
-                <h2>Sparade favoritsträckor</h2>
-                <div id="favourites">
-                    <a id="favouriteItemTemplate" href="#" data-role="button" data-icon="delete" data-iconpos="left" data-mini="true" data-inline="true" style="display: none;">Ta bort</a>
-                </div>
-            </div>
+<div data-role="popup" id="cannotSaveEqualToAndFromRoute" data-dismissible="false">
+    <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-left">Stäng</a>
+    <p>Du kan ej spara favoriter med samma station för avgång och destination.</p>
+</div>
+<div class="newFavouriteForm">
+    <h2>Varifrån och vart vill du resa?</h2>
+    <div data-role="fieldcontain" class="fromStation searchFields">
+        <input type="search" name="name" id="searchStationFrom" class="searchStations" value="" placeholder="Från ort..." data-mini="true">
+        <ul class="stations" data-role="listview" data-inset="true" style="display: none;"></ul>
+    </div>
+    <div data-role="fieldcontain" class="toStation searchFields ui-shadow">
+        <input type="search" name="name" id="searchStationTo" class="searchStations" value="" placeholder="Till ort..." data-mini="true">
+        <ul class="stations" data-role="listview" data-inset="true" style="display: none;"></ul>
+    </div>
+    <a data-role="button" data-icon="star" id="saveRouteButton" href="#" class="ui-shadow" style="display: none;">Spara sträcka</a>
+    <p>I nuläget sparas favoritsträckor som cookies.</p>
+</div>
+<div>
+    <h2>Sparade favoritsträckor</h2>
+    <div id="favourites">
+        <a id="favouriteItemTemplate" href="#" data-role="button" data-icon="delete" data-iconpos="left" data-mini="true" data-inline="true" style="display: none;">Ta bort</a>
+    </div>
+</div>

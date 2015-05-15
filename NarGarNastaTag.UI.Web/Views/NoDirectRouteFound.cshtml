@@ -7,59 +7,48 @@
 @section Title {<title>När går nästa tåg? - Direktavgångar hittades inte</title>}
 @section Heading{<h1>Direktavgångar saknas</h1>}
 @section AdditionalScripts{
-    <script type="text/javascript">
-        (function ($) {
-            var routesPage;
-            $('#routesPage').bind('pageshow', function () {
-                routesPage = new RoutesPage();
-                routesPage.load();
-            });
-            $('#routesPage').bind("pagehide", function () {
-                routesPage.routeQueue = null;
-            });
-        })(jQuery);
-    </script>
+    <script src="~/Content/dist/scripts/routesPage.entry.js"></script>
 }
 @section PageId{id="routesPage"}
-        <div class="noRoutesFound">
-            <p>Tyvärr, vi kunde inte hitta några direktavgångar på den angivna sträckan. För säkerhets skull så letar vi igen efter kommande avgångar. Du gör oss en tjänst om du meddelar att du får information om kommande tåg.</p>
-        </div>
-        <div id="noRoutesFoundPopup" data-role="popup" data-dismissible="false">
-            <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-left">Stäng</a>
-            <p>Nej, tyvärr hittades inte några direktavgångar.</p>
-            <p class="nighttimeInfo">Notera, att vi i nuläget under nattetid har svårt att ge fullständig information om kommande avgångar.</p>
-        </div>
-        <ul id="routes" data-role="listview">
-            <li id="routeItemTemplate" class="route" style="display: none;">
-                <a href="/Train?route=no" class="routeInfo" rel="nofollow">
-                    <table>
-                        <tr class="stationInfo">
-                            <th class="theRoute" colspan="2"><span class="fromStation"></span> &ndash; <span class="toStation"></span><i> (<span class="trainNo"></span>)</i></th>
-                        </tr>
-                        <tr class="timetable">
-                            <td class="tighten">
-                                <span class="departure"></span>
-                                <span class="departureDelayed hide"> (<span class="scheduledDeparture"></span>)</span>
-                            </td>
-                            <td>
-                                <span class="arrival lessAttention"></span>
-                                <span class="arrivalDelayed lessAttention hide"> (<span class="scheduledDeparture"></span>)</span>
-                            </td>
-                        </tr>
-                        <tr class="trackInfo">
-                            <td>Spår <span class="departureTrack track"></span></td>
-                            <td class="lessAttention">Spår <span class="arrivalTrack track lessAttention"></span></td>
-                        </tr>
-                        <tr class="hasTrainOperator">
-                            <td colspan="2">Körs av <span class="trainOperator"></span></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" class="notes"></td>
-                        </tr>
-                    </table>
-                </a>
-            </li>
-        </ul>
-        <div>
-            <ul id="stations"></ul>
-        </div>
+<div class="noRoutesFound">
+    <p>Tyvärr, vi kunde inte hitta några direktavgångar på den angivna sträckan. För säkerhets skull så letar vi igen efter kommande avgångar. Du gör oss en tjänst om du meddelar att du får information om kommande tåg.</p>
+</div>
+<div id="noRoutesFoundPopup" data-role="popup" data-dismissible="false">
+    <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-left">Stäng</a>
+    <p>Nej, tyvärr hittades inte några direktavgångar.</p>
+    <p class="nighttimeInfo">Notera, att vi i nuläget under nattetid har svårt att ge fullständig information om kommande avgångar.</p>
+</div>
+<ul id="routes" data-role="listview">
+    <li id="routeItemTemplate" class="route" style="display: none;">
+        <a href="/Train?route=no" class="routeInfo" rel="nofollow">
+            <table>
+                <tr class="stationInfo">
+                    <th class="theRoute" colspan="2"><span class="fromStation"></span> &ndash; <span class="toStation"></span><i> (<span class="trainNo"></span>)</i></th>
+                </tr>
+                <tr class="timetable">
+                    <td class="tighten">
+                        <span class="departure"></span>
+                        <span class="departureDelayed hide"> (<span class="scheduledDeparture"></span>)</span>
+                    </td>
+                    <td>
+                        <span class="arrival lessAttention"></span>
+                        <span class="arrivalDelayed lessAttention hide"> (<span class="scheduledDeparture"></span>)</span>
+                    </td>
+                </tr>
+                <tr class="trackInfo">
+                    <td>Spår <span class="departureTrack track"></span></td>
+                    <td class="lessAttention">Spår <span class="arrivalTrack track lessAttention"></span></td>
+                </tr>
+                <tr class="hasTrainOperator">
+                    <td colspan="2">Körs av <span class="trainOperator"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="notes"></td>
+                </tr>
+            </table>
+        </a>
+    </li>
+</ul>
+<div>
+    <ul id="stations"></ul>
+</div>

@@ -28,6 +28,8 @@
             var apiUrl = apiUrl || '@ConfigurationManager.AppSettings["API_URL"]';
         </script>
         @Html.Raw(Bundle.Css().RenderCachedAssetTag("app-ui-css"))
+        @Html.Raw(Bundle.JavaScript().RenderCachedAssetTag("jquery-with-mobile"))
+        @Html.Raw(Bundle.JavaScript().RenderCachedAssetTag("q"))
     </head>
     <body>
         <div @RenderSection("PageId") data-role="page" data-theme="a">
@@ -37,29 +39,26 @@
                 </div>
                 <div class="navigation">
                     <div>
-                        <a href="/" data-role="button" data-icon="home" data-inline="true" data-iconpos="notext" class="greenish">Hem</a>                
+                        <a href="/" data-role="button" data-icon="home" data-inline="true" data-iconpos="notext" class="greenish">Hem</a>
                         <a href="/Favourites" data-role="button" data-icon="gear" data-inline="true" data-iconpos="notext" class="bluish">Inställningar</a>
                         @*<a href="#" data-role="button" data-icon="edit" data-inline="true" data-iconpos="notext" class="greyish">Kontakt</a>
-                        <a href="#" data-role="button" data-icon="info" data-inline="true" data-iconpos="notext" class="greenish">Hjälp</a>*@                      
+                        <a href="#" data-role="button" data-icon="info" data-inline="true" data-iconpos="notext" class="greenish">Hjälp</a>*@
                     </div>
                 </div>
             </div>
             <div data-role="content">
                 @RenderBody()
+                @RenderSection("AdditionalScripts", required: false)
             </div>
             <div class="footer" data-role="footer">
                 <a href="/" title="När går nästa tåg? - Pendlarens tågtidtabell">
-                    <img src="/Content/images/commuter-icon-24x24.png" alt="När går nästa tåg? - Pendlarens tågtidtabell" />                        
+                    <img src="/Content/images/commuter-icon-24x24.png" alt="När går nästa tåg? - Pendlarens tågtidtabell" />
                 </a>
                 <div class="about" style="float: right;">
                     <span class="nt-version"></span>
                     <span class="copyright"></span>
                 </div>
             </div>
-            @Html.Raw(Bundle.JavaScript().RenderCachedAssetTag("jquery-with-mobile"))
-            @Html.Raw(Bundle.JavaScript().RenderCachedAssetTag("q"))
-            <script src="~/Content/dist/scripts/bundle.js"></script>
-            @RenderSection("AdditionalScripts", required: false)
         </div>
     </body>
 </html>
