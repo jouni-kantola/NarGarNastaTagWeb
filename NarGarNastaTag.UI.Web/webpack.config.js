@@ -1,14 +1,14 @@
 var webpack = require('webpack');
 module.exports = {
     entry: {
-        homePage: './Scripts/App/UI/HomePage.ts',
-        favoritesPage: './Scripts/App/UI/FavoritesPage.ts',
-        routesPage: './Scripts/App/UI/RoutesPage.ts',
-        trainPage: './Scripts/App/UI/TrainPage.ts'
+        home: './Scripts/App/UI/HomePage.ts',
+        favorites: './Scripts/App/UI/FavoritesPage.ts',
+        routes: './Scripts/App/UI/RoutesPage.ts',
+        train: './Scripts/App/UI/TrainPage.ts'
     },
     output: {
         path: __dirname + '/Content/dist/scripts/',
-        filename: '[name].entry.js',
+        filename: '[name].page.js',
         publicPath: 'Content/dist'
     },
     externals: {
@@ -21,6 +21,11 @@ module.exports = {
         ]),
         new webpack.ProvidePlugin({
             $: "jquery"
+        }),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: "common",
+            filename: "common.js",
+            minChunks: 2
         })
     ],
     // Currently we need to add '.ts' to resolve.extensions array.
