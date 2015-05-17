@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Dynamic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Nancy;
 using NarGarNastaTag.API.Contract;
 using NarGarNastaTag.UI.Web.Caching;
+using NarGarNastaTag.UI.Web.Extensions;
 using NarGarNastaTag.UI.Web.Models;
 using NarGarNastaTag.UI.Web.Query;
 
@@ -25,7 +27,11 @@ namespace NarGarNastaTag.UI.Web.Modules
                     favouriteRoute.FromId = System.Net.WebUtility.UrlDecode(parameters.FromId).ToUpperInvariant();
                     favouriteRoute.ToId = System.Net.WebUtility.UrlDecode(parameters.ToId).ToUpperInvariant();
                     var trainRoute = GetTrainRoute(favouriteRoute);
-                    return trainRoute != null ? View["TrainRoutes", trainRoute] : View["NoDirectRouteFound"];
+                    if (trainRoute == null) return View["NoDirectRouteFound"];
+                    dynamic extendedTrainRoute = trainRoute.ToDynamic();
+                    extendedTrainRoute.FromId = parameters.FromId;
+                    extendedTrainRoute.ToId = parameters.ToId;
+                    return View["TrainRoutes", extendedTrainRoute];
                 };
             Get["/Favourites"] = _ => View["Favourites"];
             Get["/Train"] = _ => View["Train"];

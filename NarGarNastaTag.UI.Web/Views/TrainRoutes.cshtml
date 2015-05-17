@@ -1,10 +1,10 @@
-﻿@inherits NancyRazorViewBase<NarGarNastaTag.API.Contract.ITrainRoute>
+﻿@inherits NancyRazorViewBase<dynamic>
 @{
     Layout = "Shared/_Layout.cshtml";
 }
 @section Description {<meta name="description" content="Aktuella tågtider för avgående tåg på sträckan @Model.FromStation.StationName till @Model.ToStation.StationName. Du ser också spårbyten, eventuella förseningar och om tåget är inställt." />}
 @section Title {<title>När går nästa tåg? - Tåg @Model.FromStation.StationName till @Model.ToStation.StationName</title>}
-@section Heading{<h1><span class="direction">Tåg </span>@Model.FromStation.StationName till @Model.ToStation.StationName</h1>}
+@section Heading{<h1><span class="direction">Tåg </span>@Model.FromStation.StationName till @Model.ToStation.StationName</h1><a href="~/Routes/from/@Model.ToId/to/@Model.FromId" data-role="button" data-icon="back" data-inline="true" data-iconpos="notext" class="switch-direction no-shadow dark-blue">Byt riktning</a>}
 @section AdditionalScripts{
     <script src="~/Content/dist/scripts/routes.page.js"></script>
 }

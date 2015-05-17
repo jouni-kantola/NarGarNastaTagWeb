@@ -182,14 +182,15 @@ class RoutesPage {
     }
 
     clearQueue() {
-        this.routeQueue = null;
+        this.routeQueue = [];
     }
 }
 
 var routesPage = new RoutesPage();
-$('#routesPage').bind('pageshow', function() {
+$(document).on('pageshow', '#routesPage', function() {
     routesPage.load();
 });
-$('#routesPage').bind("pagehide", function() {
+
+$(document).on('pagehide', '#routesPage', function() {
     routesPage.clearQueue();
 });

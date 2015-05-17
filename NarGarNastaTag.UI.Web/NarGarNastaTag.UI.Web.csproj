@@ -109,6 +109,7 @@
     <Compile Include="Bootstrapper\IStaticContentsConventionsAppender.cs" />
     <Compile Include="Bootstrapper\StaticContentBundler.cs" />
     <Compile Include="Bootstrapper\StaticContentsConventionsAppender.cs" />
+    <Compile Include="Extensions\DynamicExtensions.cs" />
     <Compile Include="Extensions\NancyExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Models\ISettingsProvider.cs" />
