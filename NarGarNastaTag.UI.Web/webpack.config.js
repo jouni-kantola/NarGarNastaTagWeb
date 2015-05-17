@@ -26,6 +26,11 @@ module.exports = {
             name: "common",
             filename: "common.js",
             minChunks: 2
+        }),
+        new webpack.optimize.UglifyJsPlugin({
+            mangle: {
+                except: ['$super', '$', 'Q', 'exports', 'require']
+            }
         })
     ],
     // Currently we need to add '.ts' to resolve.extensions array.
@@ -33,9 +38,6 @@ module.exports = {
         extensions: ['', '.ts', '.js'],
         modulesDirectories: ['./bower_components']
     },
-
-    // Source maps support (or 'inline-source-map' also works)
-    devtool: 'source-map',
 
     // Add loader for .ts files.
     module: {
